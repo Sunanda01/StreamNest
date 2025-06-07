@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://sunanda-sadhukhan-s-workspace-8o6qcq.us-east-1.xata.sh/db/stream_nest",
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}

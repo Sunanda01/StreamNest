@@ -1,29 +1,30 @@
 "use client";
+import { authClient } from "@/lib/auth-client";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 const SignIn = () => {
+  const handleSignIn=async()=>{
+    return await authClient.signIn.social({provider:"google"})
+  }
   return (
-    <main className="sign-up">
+    <main className="sign-in">
       <aside className="testimonial">
         <Link href="/">
-          <Image src="/logo.png" width={32} height={32} alt="logo" />
-          <h1>StreamNest</h1>
+           <Image src="/logo.png" alt="logo" height={80} width={80} />
+           <h1 className="text-4xl font-karla tracking-normal">StreamNest</h1>
         </Link>
         <div className="description">
           <section>
             <figure>
               {Array.from({ length: 5 }).map((_, index) => (
-                <Star key={index}/>
+                <Star key={index} className="text-yellow-400 fill-yellow-400"/>
               ))}
             </figure>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem,
-              nam. Quaerat reprehenderit placeat doloremque suscipit et vel
-              aspernatur incidunt consequatur illo dignissimos officiis, nihil
-              ab quis, earum, est quos alias.
+            <p className="font-sans tracking-normal">
+              StreamNest makes screen recording easy. From quick walkthroughs to full presentations, it's fast, smooth, and shareable in seconds
             </p>
             <article>
               <Image
@@ -40,31 +41,31 @@ const SignIn = () => {
             </article>
           </section>
         </div>
-        <p>© SteamNest {new Date().getFullYear()}</p>
+        <p className="font-sans tracking-normal">© SteamNest {new Date().getFullYear()}</p>
       </aside>
 
       <aside className="google-sign-in">
         <section>
           <Link href="/">
             <Image
-              src="/assets/images/jason.png"
+              src="/logo.png"
               alt="logo"
               width={40}
               height={40}
             />
-            <h1>SteamNest</h1>
+            <h1 className="font-sans tracking-normal">SteamNest</h1>
           </Link>
-          <p>
+          <p className="font-sans tracking-normal">
             Create and Share your very first <span>SteamNest</span> in no time!
           </p>
-          <button>
+          <button onClick={handleSignIn}>
             <Image
               src="/assets/icons/google.svg"
               alt="google"
               width={22}
               height={22}
             />
-            <span>Sign in with Google</span>
+            <span className="font-sans tracking-normal font-bold">Sign in with Google</span>
           </button>
         </section>
       </aside>
