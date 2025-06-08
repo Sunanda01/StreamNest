@@ -1,7 +1,8 @@
 import Header from "@/Components/header"
+import { ParamsWithSearch } from "@/index"
 
 const page = async ({ params }: ParamsWithSearch) => {
-    const { id } = await params
+    const { id } = await params;
     return (
         <div className="wrapper page">
             <Header subHeader="a@gmail.com" title="Sunanda" userImg="/assets/images/dummy.jpg"/>

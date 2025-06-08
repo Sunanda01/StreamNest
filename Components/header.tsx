@@ -2,6 +2,7 @@ import { Search, UploadIcon, Video } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import DropdownList from "./DropdownList";
+import { SharedHeaderProps } from "..";
 
 const Header = ({subHeader,title,userImg}:SharedHeaderProps) => {
   return (

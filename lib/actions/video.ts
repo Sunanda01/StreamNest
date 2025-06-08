@@ -2,7 +2,13 @@
 
 import { headers } from "next/headers";
 import { auth } from "../auth";
-import { apiFetch, doesTitleMatch, getEnv, getOrderByClause, withErrorHandling } from "../util";
+import {
+  apiFetch,
+  doesTitleMatch,
+  getEnv,
+  getOrderByClause,
+  withErrorHandling,
+} from "../util";
 import { BUNNY } from "@/constants";
 import { db } from "@/drizzle/db";
 import { user, videos } from "@/drizzle/schema";
@@ -10,6 +16,7 @@ import { revalidatePath } from "next/cache";
 import aj from "../arcjet";
 import { fixedWindow, request } from "@arcjet/next";
 import { and, eq, or, sql } from "drizzle-orm";
+import { BunnyVideoResponse, VideoDetails } from "@/index";
 
 const VIDEO_STREAM_BASE_URL = BUNNY.STREAM_BASE_URL;
 const THUMBNAIL_STORAGE_BASE_URL = BUNNY.STORAGE_BASE_URL;
@@ -57,7 +64,6 @@ const buildVideoWithUserQuery = () =>
     })
     .from(videos)
     .leftJoin(user, eq(videos.userId, user.id));
-
 
 //Server Action
 export const getVideoUploadUrl = withErrorHandling(async () => {
@@ -118,26 +124,24 @@ export const saveVideoDetails = withErrorHandling(
   }
 );
 
-export const getAllVideos = withErrorHandling(async (
-  searchQuery: string = '',
-  sortFilter?: string,
-  pageNumber: number = 1,
-  pageSize: number = 8,
-) => {
-  const session = await auth.api.getSession({ headers: await headers() })
-  const currentUserId = session?.user.id;
+export const getAllVideos = withErrorHandling(
+  async (
+    searchQuery: string = "",
+    sortFilter?: string,
+    pageNumber: number = 1,
+    pageSize: number = 8
+  ) => {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const currentUserId = session?.user.id;
 
-  const canSeeTheVideos = or(
-      eq(videos.visibility, 'public'),
-      eq(videos.userId, currentUserId!),
-  );
+    const canSeeTheVideos = or(
+      eq(videos.visibility, "public"),
+      eq(videos.userId, currentUserId!)
+    );
 
-  const whereCondition = searchQuery.trim()
-      ? and(
-          canSeeTheVideos,
-          doesTitleMatch(videos, searchQuery),
-      )
-      : canSeeTheVideos
+    const whereCondition = searchQuery.trim()
+      ? and(canSeeTheVideos, doesTitleMatch(videos, searchQuery))
+      : canSeeTheVideos;
 
     // Count total for pagination
     const [{ totalCount }] = await db
@@ -169,3 +173,17 @@ export const getAllVideos = withErrorHandling(async (
     };
   }
 );
+
+export const getVideoById = withErrorHandling(async (videoId: string) => {
+  const [videoRecord] = await buildVideoWithUserQuery().where(
+    eq(videos.videoId, videoId)
+  );
+  return videoRecord;
+});
+
+export const getTranscript = withErrorHandling(async (videoId: string) => {
+  const response = await fetch(
+    `${BUNNY.TRANSCRIPT_URL}/${videoId}/captions/en-auto.vtt`
+  );
+  return response.text();
+});

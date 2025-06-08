@@ -296,3 +296,13 @@ declare interface RecordingHandlers {
   onDataAvailable: (e: BlobEvent) => void;
   onStop: () => void;
 }
+
+interface Session {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    image: string;
+  };
+}
+
