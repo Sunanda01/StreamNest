@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 declare interface User {
   name: string;
   email: string;
@@ -248,7 +250,7 @@ declare interface DropdownListProps {
 }
 
 declare interface EmptyStateProps {
-  icon: string;
+  icon: LucideIcon;
   title: string;
   description: string;
 }
