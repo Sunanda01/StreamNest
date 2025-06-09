@@ -20,7 +20,7 @@ const HomePage = async ({ searchParams }: SearchParams) => {
         <section className="video-grid">
           {videos.map(({ video, user }) => (
             <VideoCard
-              key={video.id}
+              key={video.videoId}
               {...video}
               thumbnail={video.thumbnailUrl}
               userImg={user?.image || ''}

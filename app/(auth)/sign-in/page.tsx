@@ -3,24 +3,23 @@ import { authClient } from "@/lib/auth-client";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 const SignIn = () => {
-  const handleSignIn=async()=>{
-    return await authClient.signIn.social({provider:"google"})
+  const handleSignIn = async () => {
+   await authClient.signIn.social({ provider: "google" });
   }
   return (
     <main className="sign-in">
       <aside className="testimonial">
         <Link href="/">
-           <Image src="/logo.png" alt="logo" height={80} width={80} />
-           <h1 className="text-4xl font-karla tracking-normal">StreamNest</h1>
+          <Image src="/logo.png" alt="logo" height={80} width={80} />
+          <h1 className="text-4xl font-karla tracking-normal">StreamNest</h1>
         </Link>
         <div className="description">
           <section>
             <figure>
               {Array.from({ length: 5 }).map((_, index) => (
-                <Star key={index} className="text-yellow-400 fill-yellow-400"/>
+                <Star key={index} className="text-yellow-400 fill-yellow-400" />
               ))}
             </figure>
             <p className="font-sans tracking-normal">

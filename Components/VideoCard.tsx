@@ -4,8 +4,10 @@ import Image from "next/image"
 import Link from "next/link"
 import { VideoCardProps } from ".."
 
+
 const VideoCard = ({
   id,
+  videoId,
   title,
   thumbnail,
   createdAt,
@@ -16,8 +18,8 @@ const VideoCard = ({
   duration,
 }: VideoCardProps) => {
   return (
-    <Link href={`/video/${id}`} className="video-card">
-      <Image src={thumbnail} alt="thumbnail" width={290} height={160} />
+    <Link href={`/video/${videoId}`} className="video-card">
+      <Image src={thumbnail} alt={thumbnail} width={290} height={160} priority/>
       <article>
         <div>
           <figure>
@@ -42,7 +44,7 @@ const VideoCard = ({
         </h2>
       </article>
       <button onClick={()=>{}} className="copy-btn">
-          <LinkIcon className="h-6 w-6"/>
+          <LinkIcon className="h-4 w-4"/>
       </button>
       {duration && (
         <div className="duration tracking-widest">

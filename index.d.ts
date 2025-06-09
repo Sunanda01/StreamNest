@@ -75,6 +75,8 @@ declare interface VideoCardProps {
   id: string;
   title: string;
   thumbnail: string;
+  videoId: string;
+  thumbnailUrl: string;
   userImg: string;
   username: string;
   createdAt: Date;
@@ -113,7 +115,7 @@ declare interface ImageWithFallbackProps extends Omit<ImageProps, "src"> {
   src: string | null;
 }
 
-type Visibility = "public" | "private" | string;
+type Visibility = "public" | "private";
 
 declare interface VideoDetails {
   videoId: string;

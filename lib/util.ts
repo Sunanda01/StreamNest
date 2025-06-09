@@ -1,8 +1,10 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ilike, sql } from "drizzle-orm";
-import { DEFAULT_VIDEO_CONFIG, DEFAULT_RECORDING_CONFIG } from "@/constants";
 import { videos } from "@/drizzle/schema";
+import { ApiFetchOptions, MediaStreams, RecordingHandlers, TranscriptEntry } from "..";
+import { DEFAULT_RECORDING_CONFIG, DEFAULT_VIDEO_CONFIG } from "@/constants";
+
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -52,7 +54,7 @@ export const apiFetch = async <T = Record<string, unknown>>(
   const key = getEnv(
     bunnyType === "stream"
       ? "BUNNY_STREAM_ACCESS_KEY"
-      : "NEXT_PUBLIC_BUNNY_STORAGE_ACCESS_KEY"
+      : "BUNNY_STORAGE_ACCESS_KEY"
   );
 
   const requestHeaders = {

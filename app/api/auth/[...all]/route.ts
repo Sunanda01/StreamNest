@@ -1,6 +1,6 @@
 import aj from "@/lib/arcjet";
 import { auth } from "@/lib/auth";
-import { ArcjetDecision, shield, slidingWindow, validateEmail } from "@arcjet/next";
+import { ArcjetDecision, shield, slidingWindow, validateEmail } from "@/lib/arcjet";
 import { toNextJsHandler } from "better-auth/next-js";
 import ip from "@arcjet/ip";
 import { NextRequest } from "next/server";

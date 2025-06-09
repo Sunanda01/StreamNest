@@ -1,3 +1,5 @@
+import { FormFieldProps } from "..";
+
 const FormField = ({
     id,
     label,

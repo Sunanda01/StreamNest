@@ -6,36 +6,36 @@ import { MAX_THUMBNAIL_SIZE, MAX_VIDEO_SIZE } from "@/constants";
 import FileInput from "@/Components/FileInput";
 import { getThumbnailUploadUrl, getVideoUploadUrl, saveVideoDetails } from "@/lib/actions/video";
 import { useRouter } from "next/navigation";
+import { Visibility } from "@/index";
 
-const uploadFileToBunny = async (file: File) => {
-  const fileBuffer = await file.arrayBuffer();
-
-  const accessKey = process.env.NEXT_PUBLIC_BUNNY_STORAGE_ACCESS_KEY;
-  if (!accessKey) throw new Error("Bunny AccessKey is missing");
-
-  await fetch(
-    `https://storage.bunnycdn.com/streamnest-thumbnails/thumbnails/${file.name}`,
-    {
-      method: "PUT",
-      headers: {
-        AccessKey: accessKey,
-        "Content-Type": file.type || "application/octet-stream",
-      },
-      body: fileBuffer,
-    }
-  ).then((response) => {
+const uploadFileToBunny = (
+  file: File,
+  uploadUrl: string,
+  accessKey: string
+): Promise<void> =>
+  fetch(uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type,
+      AccessKey: accessKey,
+    },
+    body: file,
+  }).then((response) => {
     if (!response.ok)
       throw new Error(`Upload failed with status ${response.status}`);
   });
-};
 
 
 const Upload = () => {
-  const router=useRouter();
+  const router = useRouter();
   const [videoDuration, setVideoDuration] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    visibility: Visibility; // ✅ Strong type
+  }>({
     title: "",
     description: "",
     visibility: "public",
@@ -79,7 +79,7 @@ const Upload = () => {
       //Upload the thumbnail to DB
       const { uploadUrl: thumbnailUploadUrl, accessKey: thumbnailAccessKey, cdnUrl: thumbnailCdnUrl } = await getThumbnailUploadUrl(videoId);
       if (!thumbnailUploadUrl || !thumbnailAccessKey || !thumbnailCdnUrl)
-        throw new Error('Failed to get thumbnail uplaod credentials');
+        throw new Error('Failed to get thumbnail upload credentials');
 
       //attach thumbnail
       await uploadFileToBunny(thumbnail.file, thumbnailUploadUrl, thumbnailAccessKey);
@@ -89,6 +89,7 @@ const Upload = () => {
         videoId,
         thumbnailUrl: thumbnailCdnUrl,
         ...formData,
+        visibility: formData.visibility as Visibility,
         duration: videoDuration
       })
 

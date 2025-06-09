@@ -1,19 +1,16 @@
 "use client";
-import { authClient, sessionAtom } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { useAtomValue } from "jotai";
 import { LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const Navbar = () => {
-  const router = useRouter();
-  const { data, isLoading, isError } = useAtomValue(sessionAtom);
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>errorrrrr</div>;
-  if (!data?.user) {
-    return <div>No user data found.</div>;
-  }
+const router = useRouter();
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
 
   return (
     <header className="navbar">
@@ -26,17 +23,24 @@ const Navbar = () => {
         <figure className="flex gap-8 items-center">
           <button onClick={() => router.push("/profile/1")}>
             <Image
-              src={data.user.image || "/default-profile.png"} // ✅ use user's image
+              src={session?.user.image ?? "/logo.png"}
               alt="user-profile"
               height={40}
               width={40}
               className="rounded-full aspect-square"
             />
           </button>
+          
           <button
             onClick={async () => {
-              await authClient.signOut();
-              router.push("/sign-in");
+              return await authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      redirect("/sign-in");
+                    },
+                  },
+                });
+              
             }}
           >
             <LogOut className="h-8 w-8 text-gray-100" />

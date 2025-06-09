@@ -1,5 +1,6 @@
 import { Upload, X } from "lucide-react"
 import Image from "next/image"
+import { FileInputProps } from ".."
 
 const FileInput = ({ 
   id,
