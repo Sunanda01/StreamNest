@@ -405,7 +405,7 @@
           }
 
           .record-again {
-            @apply py-2.5 px-6 bg-gray-100 text-white rounded-4xl font-medium;
+            @apply py-2.5 px-6 bg-gray-100 text-white rounded-4xl font-medium flex items-center gap-2;
           }
 
           .record-upload {

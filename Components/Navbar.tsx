@@ -6,9 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
-const router = useRouter();
+  const router = useRouter();
   const { data: session } = authClient.useSession();
   const user = session?.user;
 
@@ -21,7 +22,7 @@ const router = useRouter();
         </Link>
 
         <figure className="flex gap-8 items-center">
-          <button onClick={() => router.push("/profile/1")}>
+          <button onClick={() => router.push(`/profile/${user?.id}`)}>
             <Image
               src={session?.user.image ?? "/assets/images/dummy.jpg"}
               alt="user-profile"
@@ -31,17 +32,21 @@ const router = useRouter();
               priority
             />
           </button>
-          
+
           <button
             onClick={async () => {
               return await authClient.signOut({
-                  fetchOptions: {
-                    onSuccess: () => {
-                      redirect("/sign-in");
-                    },
+                fetchOptions: {
+                  onSuccess: () => {
+                    toast.success('Logout Successful!!!');
+                    redirect("/sign-in");
                   },
-                });
-              
+                  onError: () => {
+                    toast.error('Logout Failed!!!');
+                  }
+                },
+              });
+
             }}
           >
             <LogOut className="h-8 w-8 text-gray-100" />

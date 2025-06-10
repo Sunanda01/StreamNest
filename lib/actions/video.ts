@@ -131,7 +131,7 @@ export const getAllVideos = withErrorHandling(async (
   searchQuery: string = '',
   sortFilter?: string,
   pageNumber: number = 1,
-  pageSize: number = 8,
+  pageSize: number = 4,
 ) => {
   const session = await auth.api.getSession({ headers: await headers() })
   const currentUserId = session?.user.id;

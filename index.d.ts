@@ -73,6 +73,7 @@ declare interface SearchResult {
 
 declare interface VideoCardProps {
   id: string;
+  description: string;
   title: string;
   thumbnail: string;
   videoId: string;
@@ -86,9 +87,9 @@ declare interface VideoCardProps {
 }
 
 declare interface VideoDetailHeaderProps {
-  id: string;
   title: string;
   createdAt: Date;
+  description: string;
   userImg: string | null | undefined;
   username?: string;
   videoId: string;
@@ -308,4 +309,3 @@ interface Session {
     image: string;
   };
 }
-

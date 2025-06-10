@@ -5,10 +5,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ClipboardCheck, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const VideoDetailHeader = ({
-  id,
   title,
+  description,
   createdAt,
   userImg,
   username,
@@ -22,6 +23,7 @@ const VideoDetailHeader = ({
   const handleCopyLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}/video/${videoId}`);
     setCopied(true);
+    toast.success("Link Copied!!!");
   }
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -33,7 +35,7 @@ const VideoDetailHeader = ({
   return (
     <header className="detail-header">
       <aside className="user-info">
-        <h1>{title}</h1>
+        <h1 className="tracking-normal">{title}</h1>
         <figure>
           <button onClick={() => router.push(`/profile/${ownerId}`)}>
             <Image
@@ -49,20 +51,26 @@ const VideoDetailHeader = ({
             <span>.</span>
             <p className="ml-2">{daysAgo(createdAt)}</p>
           </figcaption>
+
         </figure>
+         <div>
+          <p className="text-justify">{description}</p>
+        </div>
       </aside>
       <aside className="cta">
         <button onClick={handleCopyLink}>
-          <div className="flex gap-2 items-center font-bold">
+          <div className="flex items-center font-bold gap-1">
             {copied ? <>
               <ClipboardCheck className="h-4 w-4 text-green-500 " />
-              <span className="text-green-500 ">Copied!!</span></> : <>
+              <span className="text-green-500 ">Copied!!</span>
+            </> : <>
               <Copy className="h-4 w-4 text-blue-500" />
-              <span className="text-blue-500">Copy Link</span>
+              <span className="text-blue-500">Share Link</span>
             </>}
           </div>
         </button>
       </aside>
+      
     </header>
   );
 };

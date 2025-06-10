@@ -13,6 +13,7 @@ const page = async ({ params }: Params) => {
   return (
     <main className="wrapper page">
       <VideoDetailHeader
+      description={video.description}
         title={video.title}
         createdAt={video.createdAt}
         userImg={user?.image}

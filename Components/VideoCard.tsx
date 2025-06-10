@@ -7,6 +7,7 @@ import { VideoCardProps } from ".."
 
 const VideoCard = ({
   id,
+  description,
   videoId,
   title,
   thumbnail,

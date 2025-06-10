@@ -3,10 +3,14 @@ import { authClient } from "@/lib/auth-client";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { BeatLoader } from "react-spinners";
 
 const SignIn = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const handleSignIn = async () => {
-   await authClient.signIn.social({ provider: "google" });
+    setIsLoading(true);
+    await authClient.signIn.social({ provider: "google" })
   }
   return (
     <main className="sign-in">
@@ -58,13 +62,17 @@ const SignIn = () => {
             Create and Share your very first <span>SteamNest</span> in no time!
           </p>
           <button onClick={handleSignIn}>
-            <Image
-              src="/assets/icons/google.svg"
-              alt="google"
-              width={22}
-              height={22}
-            />
-            <span className="font-sans tracking-normal font-bold">Sign in with Google</span>
+            {isLoading ? <BeatLoader size={10} /> : <>
+              <Image
+                src="/assets/icons/google.svg"
+                alt="google"
+                width={22}
+                height={22}
+              />
+              <span className="font-sans tracking-normal font-bold">
+                Sign in with Google
+              </span></>}
+
           </button>
         </section>
       </aside>
