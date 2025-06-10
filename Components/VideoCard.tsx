@@ -29,8 +29,8 @@ const VideoCard = ({
               <p>{visibility}</p>
             </figcaption>
           </figure>
-          <aside>
-            <Eye />
+          <aside className="mt-2">
+            <Eye className="h-5 w-5"/>
             <span>{views}</span>
           </aside>
         </div>
@@ -47,7 +47,7 @@ const VideoCard = ({
           <LinkIcon className="h-4 w-4"/>
       </button>
       {duration && (
-        <div className="duration tracking-widest">
+        <div className="duration tracking-widest mt-0.5">
           {Math.ceil(duration/60)} min
         </div>
       )}

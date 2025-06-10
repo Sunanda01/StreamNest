@@ -23,11 +23,12 @@ const router = useRouter();
         <figure className="flex gap-8 items-center">
           <button onClick={() => router.push("/profile/1")}>
             <Image
-              src={session?.user.image ?? "/logo.png"}
+              src={session?.user.image ?? "/assets/images/dummy.jpg"}
               alt="user-profile"
               height={40}
               width={40}
               className="rounded-full aspect-square"
+              priority
             />
           </button>
           

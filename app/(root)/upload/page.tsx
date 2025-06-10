@@ -7,6 +7,7 @@ import FileInput from "@/Components/FileInput";
 import { getThumbnailUploadUrl, getVideoUploadUrl, saveVideoDetails } from "@/lib/actions/video";
 import { useRouter } from "next/navigation";
 import { Visibility } from "@/index";
+import {BeatLoader} from "react-spinners"
 
 const uploadFileToBunny = (
   file: File,
@@ -157,7 +158,7 @@ const Upload = () => {
           onChange={handleInputChange}
         />
         <button type="submit" disabled={isSubmitting} className="submit-button">
-          {isSubmitting ? 'Uploading.......' : 'Upload Video'}
+          {isSubmitting ? <BeatLoader color="#ffffff"/> : 'Upload Video'}
         </button>
       </form>
     </div>
