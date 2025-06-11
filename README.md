@@ -41,7 +41,7 @@ A video streaming platform designed to deliver high-quality content with a smoot
 
 <img src="/public/screenshots/Poster.png" alt="Poster" />
 
-##Quick Glimpses
+## Quick Glimpses
 
 <table>
   <tr>
