@@ -15,13 +15,13 @@ const Navbar = () => {
 
   return (
     <header className="navbar">
-      <nav className="flex justify-evenly items-center">
+      <nav className="flex justify-between items-center">
         <Link href="/" className="flex items-center gap-4">
           <Image src="/logo.png" alt="logo" height={80} width={80} />
-          <h1 className="lg:text-4xl md:text-2xl text-lg font-karla tracking-normal">StreamNest</h1>
+          <h1 className="lg:text-4xl md:text-3xl text-2xl font-karla tracking-normal">StreamNest</h1>
         </Link>
 
-        <figure className="flex lg:gap-8 md:gap-4 gap-2 items-center">
+        <figure className="flex gap-6 items-center">
           <button onClick={() => router.push(`/profile/${user?.id}`)}>
             <Image
               src={session?.user.image ?? "/assets/images/dummy.jpg"}
