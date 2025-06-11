@@ -16,7 +16,7 @@ const Navbar = () => {
   return (
     <header className="navbar">
       <nav className="flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-4">
+        <Link href="/" className="flex items-center lg:gap-4 md:gap-2 gap-1">
           <Image src="/logo.png" alt="logo" height={80} width={80} />
           <h1 className="lg:text-4xl md:text-3xl text-2xl font-karla tracking-normal">StreamNest</h1>
         </Link>
