@@ -44,7 +44,7 @@ const SignIn = () => {
             </article>
           </section>
         </div>
-        <p className="font-sans tracking-normal">© SteamNest {new Date().getFullYear()}</p>
+        <p className="font-sans tracking-normal">© StreamNest {new Date().getFullYear()}</p>
       </aside>
 
       <aside className="google-sign-in">
