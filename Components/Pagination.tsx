@@ -20,7 +20,7 @@ const Pagination = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const createPageUrl = (pageNumber:number) => {
+  const createPageUrl = (pageNumber: number) => {
     return updateURLParams(
       searchParams,
       {
@@ -32,26 +32,28 @@ const Pagination = ({
     );
   };
 
-  const navigateToPage = (pageNumber:number) => {
+  const navigateToPage = (pageNumber: number) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
     router.push(createPageUrl(pageNumber));
   };
 
   return (
-    <section className="pagination justify-between flex flex-row">
+    <section className="pagination flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
       <button
         onClick={() => navigateToPage(currentPage - 1)}
-        className={cn("nav-button", {
+        className={cn("nav-button hidden lg:block md:block", {
           "pointer-events-none opacity-50": currentPage === 1,
         })}
         disabled={currentPage === 1}
         aria-disabled={currentPage === 1}
       >
-        <ArrowBigLeft className="text-black fill-black"/>
-        Previous
+        <div>
+          <ArrowBigLeft className="text-black fill-black" />
+          Previous
+        </div>
       </button>
 
-      <div>
+      <div className="flex flex-wrap justify-center items-center gap-2">
         {pages.map((page, index) =>
           page === "..." ? (
             <span key={`ellipsis-${index}`}>...</span>
@@ -60,7 +62,7 @@ const Pagination = ({
               key={`page-${page}`}
               onClick={() => navigateToPage(page as number)}
               className={cn({
-                "bg-pink-100 text-white": currentPage === page,
+                "bg-pink-100 text-white ": currentPage === page,
               })}
             >
               {page}
@@ -71,14 +73,16 @@ const Pagination = ({
 
       <button
         onClick={() => navigateToPage(currentPage + 1)}
-        className={cn("nav-button", {
+        className={cn("nav-button hidden lg:block md:block", {
           "pointer-events-none opacity-50": currentPage === totalPages,
         })}
         disabled={currentPage === totalPages}
         aria-disabled={currentPage === totalPages}
       >
-        Next
-       <ArrowBigRight className="text-black fill-black"/>
+        <div>
+          Next
+          <ArrowBigRight className="text-black fill-black" />
+        </div>
       </button>
     </section>
   );

@@ -102,12 +102,12 @@ const Header = ({ subHeader, title, userImg }: SharedHeaderProps) => {
           />
           <Search className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400 w-4 h-4" />
         </div>
-        <DropdownList
+        {/* <DropdownList
           options={filterOptions}
           selectedOption={selectedFilter}
           onOptionSelect={handleFilterChange}
           triggerElement={renderFilterTrigger()}
-        />
+        /> */}
       </section>
     </header>
   );
