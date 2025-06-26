@@ -38,7 +38,7 @@ const Pagination = ({
   };
 
   return (
-    <section className="pagination wrapper">
+    <section className="pagination justify-between flex flex-row">
       <button
         onClick={() => navigateToPage(currentPage - 1)}
         className={cn("nav-button", {
