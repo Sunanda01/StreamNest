@@ -42,7 +42,7 @@ const Header = ({ subHeader, title, userImg }: SharedHeaderProps) => {
     return () => clearTimeout(debounceTimer);
   }, [searchQuery, searchParams, pathname, router]);
 
-    const handleFilterChange = (filter: string) => {
+  const handleFilterChange = (filter: string) => {
     setSelectedFilter(filter);
     const url = updateURLParams(
       searchParams,
@@ -52,13 +52,13 @@ const Header = ({ subHeader, title, userImg }: SharedHeaderProps) => {
     router.push(url);
   };
 
-    const renderFilterTrigger = () => (
+  const renderFilterTrigger = () => (
     <div className="filter-trigger">
       <figure>
-        <MenuIcon/>
+        <MenuIcon />
         <span>{selectedFilter}</span>
       </figure>
-      <ArrowDown/>
+      <ArrowDown />
     </div>
   );
 
@@ -80,13 +80,17 @@ const Header = ({ subHeader, title, userImg }: SharedHeaderProps) => {
             <h1 className="tracking-normal text-xl lg:text-3xl md:text-2xl">{title}</h1>
           </article>
         </div>
-        <aside>
-          <Link href="/upload">
+        <aside className="flex flex-row gap-3 sm:items-center">
+          <Link
+            href="/upload"
+            className="flex items-center justify-center gap-2 px-4 py-2 rounded-full  text-black text-sm sm:text-base hover:bg-slate-200 transition"
+          >
             <UploadIcon className="h-5 w-5" />
-            <span className="text-lg">Upload a video</span>
+            <span>Upload a video</span>
           </Link>
           <RecordScreen />
         </aside>
+
       </section>
       <section className="search-filter">
         <div className="search">
