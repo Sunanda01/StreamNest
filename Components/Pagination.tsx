@@ -38,7 +38,7 @@ const Pagination = ({
   };
 
   return (
-    <section className="pagination">
+    <section className="pagination wrapper">
       <button
         onClick={() => navigateToPage(currentPage - 1)}
         className={cn("nav-button", {
