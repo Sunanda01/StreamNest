@@ -52,7 +52,7 @@ const RecordScreen = () => {
   };
 
   return (
-    <div className="record">
+    <div className="record max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <button
         className="primary-btn flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base rounded-full bg-pink-500 text-white w-full sm:w-auto"
         onClick={() => setIsOpen(true)}
