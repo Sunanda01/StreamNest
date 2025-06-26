@@ -32,7 +32,7 @@ const Navbar = () => {
               alt="user-profile"
               height={36}
               width={36}
-              className="rounded-full aspect-square"
+              className="rounded-full aspect-square lg:h-9 lg:w-9 md:h-9 md:w-9 h-7 w-7"
               priority
             />
           </button>
