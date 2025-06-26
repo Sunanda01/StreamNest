@@ -86,7 +86,7 @@ const Header = ({ subHeader, title, userImg }: SharedHeaderProps) => {
             className="flex items-center justify-center gap-2 px-4 py-2 rounded-full  text-black text-sm sm:text-base hover:bg-slate-200 transition"
           >
             <UploadIcon className="h-5 w-5" />
-            <span>Upload a video</span>
+            <span>Upload Video</span>
           </Link>
           <RecordScreen />
         </aside>

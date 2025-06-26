@@ -52,13 +52,13 @@ const RecordScreen = () => {
   };
 
   return (
-    <div className="record max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="record">
       <button
         className="primary-btn flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base rounded-full bg-pink-500 text-white w-full sm:w-auto"
         onClick={() => setIsOpen(true)}
       >
         <Video className="h-5 w-5" />
-        <span className="truncate">Record a video</span>
+        <span className="truncate">Record Video</span>
       </button>
       {isOpen && (
         <section className="dialog">
