@@ -80,7 +80,7 @@ const Header = ({ subHeader, title, userImg }: SharedHeaderProps) => {
             <h1 className="tracking-normal text-xl lg:text-3xl md:text-2xl">{title}</h1>
           </article>
         </div>
-        <aside className="flex flex-row gap-3 sm:items-center">
+        <aside className="flex flex-row gap-3 sm:items-center justify-start">
           <Link
             href="/upload"
             className="flex items-center justify-center gap-2 px-4 py-2 rounded-full  text-black text-sm sm:text-base hover:bg-slate-200 transition"
