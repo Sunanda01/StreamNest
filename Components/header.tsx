@@ -77,7 +77,7 @@ const Header = ({ subHeader, title, userImg }: SharedHeaderProps) => {
           )}
           <article>
             <p className="tracking-normal">{subHeader}</p>
-            <h1 className="tracking-normal">{title}</h1>
+            <h1 className="tracking-normal text-xl lg:text-3xl md:text-2xl">{title}</h1>
           </article>
         </div>
         <aside>

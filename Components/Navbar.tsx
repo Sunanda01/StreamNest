@@ -14,20 +14,24 @@ const Navbar = () => {
   const user = session?.user;
 
   return (
-    <header className="navbar">
-      <nav className="flex justify-between items-center">
-        <Link href="/" className="flex items-center lg:gap-4 md:gap-2 gap-1">
-          <Image src="/logo.png" alt="logo" height={80} width={80} />
-          <h1 className="lg:text-4xl md:text-3xl text-2xl font-karla tracking-normal">StreamNest</h1>
+    <header className="w-full px-4 py-2 bg-white shadow-md sticky top-0 z-50">
+      <nav className="flex justify-between items-center w-full max-w-screen-xl mx-auto">
+        {/* Logo + Brand Name */}
+        <Link href="/" className="flex items-center gap-2 sm:gap-3">
+          <Image src="/logo.png" alt="logo" height={50} width={50} />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-serif tracking-normal">
+            StreamNest
+          </h1>
         </Link>
 
-        <figure className="flex gap-6 items-center">
+        {/* Profile + Logout */}
+        <figure className="flex items-center gap-3 sm:gap-6">
           <button onClick={() => router.push(`/profile/${user?.id}`)}>
             <Image
               src={session?.user.image ?? "/assets/images/dummy.jpg"}
               alt="user-profile"
-              height={40}
-              width={40}
+              height={36}
+              width={36}
               className="rounded-full aspect-square"
               priority
             />
@@ -35,25 +39,26 @@ const Navbar = () => {
 
           <button
             onClick={async () => {
-              return await authClient.signOut({
+              await authClient.signOut({
                 fetchOptions: {
                   onSuccess: () => {
-                    toast.success('Logout Successful!!!');
+                    toast.success("Logout Successful!!!");
                     redirect("/sign-in");
                   },
                   onError: () => {
-                    toast.error('Logout Failed!!!');
-                  }
+                    toast.error("Logout Failed!!!");
+                  },
                 },
               });
-
             }}
+            className="p-1 rounded hover:bg-gray-200 transition"
           >
-            <LogOut className="h-8 w-8 text-gray-100" />
+            <LogOut className="h-6 w-6 sm:h-8 sm:w-8 text-gray-700" />
           </button>
         </figure>
       </nav>
     </header>
+
   );
 };
 

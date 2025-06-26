@@ -32,47 +32,53 @@ const VideoDetailHeader = ({
     return () => clearTimeout(timer);
   }, [copied])
 
-  return (
-    <header className="detail-header">
-      <aside className="user-info">
-        <h1 className="tracking-normal">{title}</h1>
-        <figure>
-          <button onClick={() => router.push(`/profile/${ownerId}`)}>
-            <Image
-              src={userImg || ""}
-              alt="User"
-              height={24}
-              width={24}
-              className="rounded-full"
-            />
-            <h2 className="text-lg capitalize tracking-wide ">{username}</h2>
-          </button>
-          <figcaption className="ml-2">
-            <span>.</span>
-            <p className="ml-2">{daysAgo(createdAt)}</p>
-          </figcaption>
+ return (
+  <header className="w-full flex flex-col gap-4 px-4 py-2 sm:py-4">
+    {/* Title */}
+    <h1 className="lg:text-4xl md:text-3xl text-xl font-semibold tracking-normal leading-snug">
+      {title}
+    </h1>
 
-        </figure>
-         <div>
-          <p className="text-justify">{description}</p>
+    {/* User Info Section */}
+    <div className="flex items-start sm:items-center gap-3 flex-wrap">
+      <button onClick={() => router.push(`/profile/${ownerId}`)} className="flex items-center gap-2">
+        <Image
+          src={userImg || "/assets/images/dummy.jpg"}
+          alt="User"
+          height={32}
+          width={32}
+          className="rounded-full object-cover"
+        />
+        <div className="text-sm sm:text-base leading-tight flex items-center gap-10 lg:text-2xl">
+          <h2 className="capitalize font-medium text-sm lg:text-xl">{username}</h2>
+          <p className="text-gray-500 text-xs lg:text-lg">{daysAgo(createdAt)}</p>
         </div>
-      </aside>
-      <aside className="cta">
-        <button onClick={handleCopyLink}>
-          <div className="flex items-center font-bold gap-1">
-            {copied ? <>
-              <ClipboardCheck className="h-4 w-4 text-green-500 " />
-              <span className="text-green-500 ">Copied!!</span>
-            </> : <>
-              <Copy className="h-4 w-4 text-blue-500" />
-              <span className="text-blue-500">Share Link</span>
-            </>}
-          </div>
-        </button>
-      </aside>
-      
-    </header>
-  );
+      </button>
+    </div>
+
+    {/* Description */}
+    <p className="text-sm sm:text-base text-justify text-gray-800 leading-relaxed">
+      {description}
+    </p>
+
+    {/* Share Link Button */}
+    <div className="self-start">
+      <button onClick={handleCopyLink} className="flex items-center gap-1 text-sm font-semibold">
+        {copied ? (
+          <>
+            <ClipboardCheck className="h-4 w-4 text-green-500" />
+            <span className="text-green-500">Copied!</span>
+          </>
+        ) : (
+          <>
+            <Copy className="h-4 w-4 text-blue-500" />
+            <span className="text-blue-500">Share Link</span>
+          </>
+        )}
+      </button>
+    </div>
+  </header>
+);
 };
 
 export default VideoDetailHeader;
