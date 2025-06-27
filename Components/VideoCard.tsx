@@ -1,8 +1,11 @@
 "use client"
-import { Eye,LinkIcon } from "lucide-react"
+import { Eye, LinkIcon, TrashIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { VideoCardProps } from ".."
+import { useRouter } from "next/navigation"
+import { deleteVideo } from "@/lib/actions/video"
+import toast from "react-hot-toast"
 
 
 const VideoCard = ({
@@ -11,6 +14,7 @@ const VideoCard = ({
   videoId,
   title,
   thumbnail,
+  thumbnailUrl,
   createdAt,
   userImg,
   username,
@@ -18,9 +22,17 @@ const VideoCard = ({
   visibility,
   duration,
 }: VideoCardProps) => {
+  const router = useRouter();
+  const removeVideo = async () => {
+    const del = await deleteVideo(videoId, thumbnailUrl);
+    console.log(del);
+    if (!del.success) return toast.error(del.message);
+    toast.success(del.message);
+    return router.refresh();
+  }
   return (
-    <Link href={`/video/${videoId}`} className="video-card">
-      <Image src={thumbnail} alt={thumbnail} width={290} height={160} priority/>
+    <div className="video-card">
+      <Image src={thumbnail} alt={thumbnail} width={290} height={160} priority />
       <article>
         <div>
           <figure>
@@ -31,7 +43,7 @@ const VideoCard = ({
             </figcaption>
           </figure>
           <aside className="mt-2">
-            <Eye className="h-5 w-5"/>
+            <Eye className="h-5 w-5" />
             <span>{views}</span>
           </aside>
         </div>
@@ -44,15 +56,21 @@ const VideoCard = ({
           })}
         </h2>
       </article>
-      <button onClick={()=>{}} className="copy-btn">
-          <LinkIcon className="h-4 w-4"/>
+      <button onClick={(e) => {
+        e.stopPropagation()
+        router.push(`/video/${videoId}`)
+      }} className="copy-btn hover:bg-blue-500">
+        <LinkIcon className="h-4 w-4 hover:text-white" />
+      </button>
+      <button onClick={removeVideo} className="copy-btn mt-8 hover:bg-red-400 ">
+        <TrashIcon className="h-4 w-4 fill-black hover:fill-white hover:text-white" />
       </button>
       {duration && (
         <div className="duration tracking-widest mt-0.5">
-          {Math.ceil(duration/60)} min
+          {Math.ceil(duration / 60)} min
         </div>
       )}
-    </Link>
+    </div>
   )
 }
 

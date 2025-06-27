@@ -127,26 +127,24 @@ export const saveVideoDetails = withErrorHandling(
   }
 );
 
-export const getAllVideos = withErrorHandling(async (
-  searchQuery: string = '',
-  sortFilter?: string,
-  pageNumber: number = 1,
-  pageSize: number = 4,
-) => {
-  const session = await auth.api.getSession({ headers: await headers() })
-  const currentUserId = session?.user.id;
+export const getAllVideos = withErrorHandling(
+  async (
+    searchQuery: string = "",
+    sortFilter?: string,
+    pageNumber: number = 1,
+    pageSize: number = 4
+  ) => {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const currentUserId = session?.user.id;
 
-  const canSeeTheVideos = or(
-      eq(videos.visibility, 'public'),
-      eq(videos.userId, currentUserId!),
-  );
+    const canSeeTheVideos = or(
+      eq(videos.visibility, "public"),
+      eq(videos.userId, currentUserId!)
+    );
 
-  const whereCondition = searchQuery.trim()
-      ? and(
-          canSeeTheVideos,
-          doesTitleMatch(videos, searchQuery),
-      )
-      : canSeeTheVideos
+    const whereCondition = searchQuery.trim()
+      ? and(canSeeTheVideos, doesTitleMatch(videos, searchQuery))
+      : canSeeTheVideos;
 
     // Count total for pagination
     const [{ totalCount }] = await db
@@ -227,7 +225,7 @@ export const getAllVideosByUser = withErrorHandling(
       .where(eq(user.id, userIdParameter));
     if (!userInfo) throw new Error("User not found");
 
-        /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const conditions = [
       eq(videos.userId, userIdParameter),
       !isOwner && eq(videos.visibility, "public"),
@@ -273,20 +271,24 @@ export const getVideoProcessingStatus = withErrorHandling(
 );
 
 export const deleteVideo = withErrorHandling(
-  async (videoId: string, thumbnailUrl: string) => {
-    await apiFetch(
-      `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
-      { method: "DELETE", bunnyType: "stream" }
-    );
+  async (videoId: string, thumbnailUrl: string) => {  
+    try {
+      await apiFetch(
+        `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
+        { method: "DELETE", bunnyType: "stream" }
+      );
 
-    const thumbnailPath = thumbnailUrl.split("thumbnails/")[1];
-    await apiFetch(
-      `${THUMBNAIL_STORAGE_BASE_URL}/thumbnails/${thumbnailPath}`,
-      { method: "DELETE", bunnyType: "storage", expectJson: false }
-    );
+      const thumbnailPath = thumbnailUrl.split("thumbnails/")[1];
+      await apiFetch(
+        `${THUMBNAIL_STORAGE_BASE_URL}/thumbnails/${thumbnailPath}`,
+        { method: "DELETE", bunnyType: "storage", expectJson: false }
+      );
 
-    await db.delete(videos).where(eq(videos.videoId, videoId));
-    revalidatePaths(["/", `/video/${videoId}`]);
-    return {};
+      await db.delete(videos).where(eq(videos.videoId, videoId));
+      revalidatePaths(["/", `/video/${videoId}`]);
+      return { success: true, message: "Video deleted successfully" };
+    } catch (error) {
+      return { success: false, message: "Failed to delete video", err:error };
+    }
   }
 );
