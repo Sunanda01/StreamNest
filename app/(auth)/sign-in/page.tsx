@@ -56,10 +56,10 @@ const SignIn = () => {
               width={40}
               height={40}
             />
-            <h1 className="font-sans tracking-normal">SteamNest</h1>
+            <h1 className="font-sans tracking-normal">StreamNest</h1>
           </Link>
           <p className="font-sans tracking-normal">
-            Create and Share your very first <span>SteamNest</span> in no time!
+            Create and Share your very first <span>StreamNest</span> in no time!
           </p>
           <button onClick={handleSignIn}>
             {isLoading ? <BeatLoader size={10} /> : <>
