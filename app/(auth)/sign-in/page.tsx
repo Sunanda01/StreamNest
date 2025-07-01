@@ -16,7 +16,7 @@ const SignIn = () => {
     <main className="sign-in">
       <aside className="testimonial">
         <Link href="/">
-          <Image src="/assets/icons/logo.png" alt="logo" height={80} width={80} />
+          <Image src="/assets/icons/logo.svg" alt="logo" height={80} width={80} />
           <h1 className="text-4xl font-karla tracking-normal">StreamNest</h1>
         </Link>
         <div className="description">
@@ -51,7 +51,7 @@ const SignIn = () => {
         <section>
           <Link href="/">
             <Image
-              src="/assets/icons/logo.png"
+              src="/assets/icons/logo.svg"
               alt="logo"
               width={40}
               height={40}

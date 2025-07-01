@@ -79,6 +79,7 @@ declare interface VideoCardProps {
   videoUrl:string;
   videoId: string;
   thumbnailUrl: string;
+  userId:string;
   userImg: string;
   username: string;
   createdAt: Date;

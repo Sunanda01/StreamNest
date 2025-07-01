@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { Visibility } from "@/index";
 import { BeatLoader } from "react-spinners";
 import toast from "react-hot-toast";
-import { uploadThumbnailToCloudinary, uploadVideoToCloudinary } from "@/lib/actions/cloudinary";
+import { uploadThumbnailToCloudinary, uploadVideoToCloudinary } from "@/lib/Cloudinary/cloudinary_client";
 import { v4 as uuidv4 } from "uuid";
 // const uploadFileToBunny = (
 //   file: File,
@@ -84,13 +84,13 @@ const Upload = () => {
         sessionStorage.removeItem("recordedVideo");
         URL.revokeObjectURL(url);
       } catch (e) {
-        console.error("Error Loading Recorded Video",e);
+        console.error("Error Loading Recorded Video", e);
       }
     };
     checkForRecordedVideo();
   }, [video]);
 
-  
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -105,63 +105,25 @@ const Upload = () => {
         return;
       }
 
-      const video_res=await uploadVideoToCloudinary(video.file);
-      console.log("res",video_res);
-      
-      const thumbnail_res=await uploadThumbnailToCloudinary(thumbnail.file);
+      const video_res = await uploadVideoToCloudinary(video.file);
+      console.log("res", video_res);
+
+      const thumbnail_res = await uploadThumbnailToCloudinary(thumbnail.file);
       console.log(thumbnail_res);
 
       //Create a new Db Entry
-       const res=await saveVideoDetails({
-      
-        videoId:uuidv4(),
-        videoUrl:video_res.secure_url,
+      const res = await saveVideoDetails({
+
+        videoId: uuidv4(),
+        videoUrl: video_res.secure_url,
         thumbnailUrl: thumbnail_res.secure_url,
         ...formData,
         visibility: formData.visibility as Visibility,
         duration: videoDuration,
       });
       console.log(res);
-      
-    router.push(`/video/${res.videoId}`);
-      // //Get Upload URL
-      // const {
-      //   videoId,
-      //   uploadUrl: videoUploadUrl,
-      //   accessKey: videoAccessKey,
-      // } = await getVideoUploadUrl();
-      // if (!videoUploadUrl || !videoAccessKey)
-      //   throw new Error("Failed to get video uplaod credentials");
 
-      // //Upload Video to BUNNY
-      // await uploadFileToBunny(video.file, videoUploadUrl, videoAccessKey);
-
-      // //Upload the thumbnail to DB
-      // const {
-      //   uploadUrl: thumbnailUploadUrl,
-      //   accessKey: thumbnailAccessKey,
-      //   cdnUrl: thumbnailCdnUrl,
-      // } = await getThumbnailUploadUrl(videoId);
-      // if (!thumbnailUploadUrl || !thumbnailAccessKey || !thumbnailCdnUrl)
-      //   throw new Error("Failed to get thumbnail upload credentials");
-
-      // //attach thumbnail
-      // await uploadFileToBunny(
-      //   thumbnail.file,
-      //   thumbnailUploadUrl,
-      //   thumbnailAccessKey
-      // );
-
-      // //Create a new Db Entry
-      // await saveVideoDetails({
-      //   videoId,
-      //   thumbnailUrl: thumbnailCdnUrl,
-      //   ...formData,
-      //   visibility: formData.visibility as Visibility,
-      //   duration: videoDuration,
-      // });
-
-      // router.push(`/video/${videoId}`);
+      router.push(`/video/${res.videoId}`);
     } catch (error) {
       toast.error("Upload Failed!!!");
       console.error("Error Submitting Form: ", error);

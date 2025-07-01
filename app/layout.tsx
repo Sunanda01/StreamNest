@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "StreamNest",
   description: "Capture. Upload. Share effortlessly",
   icons: {
-    icon: "/logo.png", // or "/favicon.ico"
+    icon: "/logo.svg", // or "/favicon.ico"
   },
 };
 

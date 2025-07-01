@@ -18,11 +18,20 @@ const Navbar = () => {
       <nav className="flex justify-between items-center w-full max-w-screen-xl mx-auto">
         {/* Logo + Brand Name */}
         <Link href="/" className="flex items-center gap-2 sm:gap-3">
-          <Image src="/logo.png" alt="logo" height={50} width={50} />
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-serif tracking-normal">
-            StreamNest
-          </h1>
-        </Link>
+  <div className="relative h-[40px] w-[40px] sm:h-[50px] sm:w-[50px]">
+    <Image
+      src="/logo.svg"
+      alt="StreamNest Logo"
+      fill
+      className="object-contain"
+      sizes="(max-width: 640px) 40px, 50px"
+      priority
+    />
+  </div>
+  <h1 className="text-xl sm:text-2xl md:text-3xl font-serif tracking-normal">
+    StreamNest
+  </h1>
+</Link>
 
         {/* Profile + Logout */}
         <figure className="flex items-center gap-3 sm:gap-6">
