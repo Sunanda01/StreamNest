@@ -12,6 +12,7 @@ const VideoCard = ({
   id,
   description,
   videoId,
+  videoUrl,
   title,
   thumbnail,
   thumbnailUrl,
@@ -24,7 +25,7 @@ const VideoCard = ({
 }: VideoCardProps) => {
   const router = useRouter();
   const removeVideo = async () => {
-    const del = await deleteVideo(videoId, thumbnailUrl);
+    const del = await deleteVideo(videoId,videoUrl, thumbnailUrl);
     console.log(del);
     if (!del.success) return toast.error(del.message);
     toast.success(del.message);

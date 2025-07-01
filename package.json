@@ -15,6 +15,7 @@
     "@arcjet/next": "^1.0.0-beta.8",
     "@xata.io/client": "^0.0.0-next.v93343b9646f57a1e5c51c35eccf0767c2bb80baa",
     "better-auth": "^1.2.8",
+    "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
     "cookie": "^1.0.2",
     "dotenv": "^16.5.0",
@@ -23,12 +24,14 @@
     "jotai-tanstack-query": "^0.9.0",
     "lucide-react": "^0.513.0",
     "next": "15.3.3",
+    "next-cloudinary": "^6.16.0",
     "pg": "^8.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
     "react-spinners": "^0.17.0",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.3.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.0.0",
@@ -44,7 +47,7 @@
     "@types/react-dom": "^19",
     "@vitest/browser": "^3.2.3",
     "@vitest/coverage-v8": "^3.2.3",
-    "drizzle-kit": "^0.31.4",
+    "drizzle-kit": "^0.18.1",
     "playwright": "^1.52.0",
     "storybook": "^9.0.6",
     "tailwindcss": "^4",

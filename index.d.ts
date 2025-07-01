@@ -76,6 +76,7 @@ declare interface VideoCardProps {
   description: string;
   title: string;
   thumbnail: string;
+  videoUrl:string;
   videoId: string;
   thumbnailUrl: string;
   userImg: string;
@@ -99,6 +100,8 @@ declare interface VideoDetailHeaderProps {
 }
 
 declare interface VideoPlayerProps {
+  thumbnailUrl:string;
+  videoUrl:string;
   videoId: string;
   className?: string;
 }
@@ -123,6 +126,7 @@ declare interface VideoDetails {
   videoId: string;
   title: string;
   description: string;
+  videoUrl:string;
   thumbnailUrl: string;
   visibility: Visibility;
   duration?: number | null;

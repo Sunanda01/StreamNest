@@ -16,16 +16,18 @@ import { revalidatePath } from "next/cache";
 import aj, { fixedWindow, request } from "../arcjet";
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { BunnyVideoResponse, VideoDetails, Visibility } from "@/index";
+import cloudinary from "./cloudinary";
+
 
 // Constants with full names
-const VIDEO_STREAM_BASE_URL = BUNNY.STREAM_BASE_URL;
-const THUMBNAIL_STORAGE_BASE_URL = BUNNY.STORAGE_BASE_URL;
-const THUMBNAIL_CDN_URL = BUNNY.CDN_URL;
-const BUNNY_LIBRARY_ID = getEnv("BUNNY_LIBRARY_ID");
-const ACCESS_KEYS = {
-  streamAccessKey: getEnv("BUNNY_STREAM_ACCESS_KEY"),
-  storageAccessKey: getEnv("BUNNY_STORAGE_ACCESS_KEY"),
-};
+// const VIDEO_STREAM_BASE_URL = BUNNY.STREAM_BASE_URL;
+// const THUMBNAIL_STORAGE_BASE_URL = BUNNY.STORAGE_BASE_URL;
+// const THUMBNAIL_CDN_URL = BUNNY.CDN_URL;
+// const BUNNY_LIBRARY_ID = getEnv("BUNNY_LIBRARY_ID");
+// const ACCESS_KEYS = {
+//   streamAccessKey: getEnv("BUNNY_STREAM_ACCESS_KEY"),
+//   storageAccessKey: getEnv("BUNNY_STORAGE_ACCESS_KEY"),
+// };
 
 const validateWithArcjet = async (fingerPrint: string) => {
   const rateLimit = aj.withRule(
@@ -64,59 +66,15 @@ const buildVideoWithUserQuery = () =>
     .leftJoin(user, eq(videos.userId, user.id));
 
 // Server Actions
-export const getVideoUploadUrl = withErrorHandling(async () => {
-  await getSessionUserId();
-  const videoResponse = await apiFetch<BunnyVideoResponse>(
-    `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos`,
-    {
-      method: "POST",
-      bunnyType: "stream",
-      body: { title: "Temp Title", collectionId: "" },
-    }
-  );
-
-  const uploadUrl = `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoResponse.guid}`;
-  return {
-    videoId: videoResponse.guid,
-    uploadUrl,
-    accessKey: ACCESS_KEYS.streamAccessKey,
-  };
-});
-
-export const getThumbnailUploadUrl = withErrorHandling(
-  async (videoId: string) => {
-    const timestampedFileName = `${Date.now()}-${videoId}-thumbnail.png`;
-    const uploadUrl = `${THUMBNAIL_STORAGE_BASE_URL}/thumbnails/${timestampedFileName}`;
-    const cdnUrl = `${THUMBNAIL_CDN_URL}/thumbnails/${timestampedFileName}`;
-
-    return {
-      uploadUrl,
-      cdnUrl,
-      accessKey: ACCESS_KEYS.storageAccessKey,
-    };
-  }
-);
 
 export const saveVideoDetails = withErrorHandling(
   async (videoDetails: VideoDetails) => {
     const userId = await getSessionUserId();
     await validateWithArcjet(userId);
-    await apiFetch(
-      `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoDetails.videoId}`,
-      {
-        method: "POST",
-        bunnyType: "stream",
-        body: {
-          title: videoDetails.title,
-          description: videoDetails.description,
-        },
-      }
-    );
 
     const now = new Date();
     await db.insert(videos).values({
       ...videoDetails,
-      videoUrl: `${BUNNY.EMBED_URL}/${BUNNY_LIBRARY_ID}/${videoDetails.videoId}`,
       userId,
       createdAt: now,
       updatedAt: now,
@@ -126,6 +84,110 @@ export const saveVideoDetails = withErrorHandling(
     return { videoId: videoDetails.videoId };
   }
 );
+
+export const getVideoById = withErrorHandling(async (videoId: string) => {
+  const [videoRecord] = await buildVideoWithUserQuery().where(
+    eq(videos.videoId, videoId)
+  );
+  return videoRecord;
+});
+
+function getPublicIdFromUrl(url: string, folder: string): string {
+  const regex = new RegExp(
+    `${folder}/(.+?)\\.(jpg|jpeg|png|gif|webp|mp4|mov|mkv)$`
+  );
+  const match = url.match(regex);
+  return match ? `${folder}/${match[1]}` : "";
+}
+
+export const deleteVideo = withErrorHandling(
+  async (videoId: string, videoUrl: string, thumbnailUrl: string) => {
+    try {
+      console.log("thumbnailUrl", thumbnailUrl, "videoUrl", videoUrl);
+      const thumbnailPublicId = getPublicIdFromUrl(
+        thumbnailUrl,
+        "StreamNest_Thumbnail"
+      );
+      const videoPublicId = getPublicIdFromUrl(videoUrl, "StreamNest_Video");
+      const res=await cloudinary.uploader.destroy(thumbnailPublicId, {
+        resource_type: "image",
+      });
+      console.log(res);
+      await cloudinary.uploader.destroy(videoPublicId, {
+        resource_type: "video",
+      });
+
+      await db.delete(videos).where(eq(videos.videoId, videoId));
+      revalidatePaths(["/", `/video/${videoId}`]);
+      return { success: true, message: "Video deleted successfully" };
+    } catch (error) {
+      return { success: false, message: "Failed to delete video", err: error };
+    }
+  }
+);
+
+// export const getVideoUploadUrl = withErrorHandling(async () => {
+//   await getSessionUserId();
+//   const videoResponse = await apiFetch<BunnyVideoResponse>(
+//     `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos`,
+//     {
+//       method: "POST",
+//       bunnyType: "stream",
+//       body: { title: "Temp Title", collectionId: "" },
+//     }
+//   );
+
+//   const uploadUrl = `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoResponse.guid}`;
+//   return {
+//     videoId: videoResponse.guid,
+//     uploadUrl,
+//     accessKey: ACCESS_KEYS.streamAccessKey,
+//   };
+// });
+
+// export const getThumbnailUploadUrl = withErrorHandling(
+//   async (videoId: string) => {
+//     const timestampedFileName = `${Date.now()}-${videoId}-thumbnail.png`;
+//     const uploadUrl = `${THUMBNAIL_STORAGE_BASE_URL}/thumbnails/${timestampedFileName}`;
+//     const cdnUrl = `${THUMBNAIL_CDN_URL}/thumbnails/${timestampedFileName}`;
+
+//     return {
+//       uploadUrl,
+//       cdnUrl,
+//       accessKey: ACCESS_KEYS.storageAccessKey,
+//     };
+//   }
+// );
+
+// export const saveVideoDetails = withErrorHandling(
+//   async (videoDetails: VideoDetails) => {
+//     const userId = await getSessionUserId();
+//     await validateWithArcjet(userId);
+//     await apiFetch(
+//       `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoDetails.videoId}`,
+//       {
+//         method: "POST",
+//         bunnyType: "stream",
+//         body: {
+//           title: videoDetails.title,
+//           description: videoDetails.description,
+//         },
+//       }
+//     );
+
+//     const now = new Date();
+//     await db.insert(videos).values({
+//       ...videoDetails,
+//       videoUrl: `${BUNNY.EMBED_URL}/${BUNNY_LIBRARY_ID}/${videoDetails.videoId}`,
+//       userId,
+//       createdAt: now,
+//       updatedAt: now,
+//     });
+
+//     revalidatePaths(["/"]);
+//     return { videoId: videoDetails.videoId };
+//   }
+// );
 
 export const getAllVideos = withErrorHandling(
   async (
@@ -177,19 +239,19 @@ export const getAllVideos = withErrorHandling(
   }
 );
 
-export const getVideoById = withErrorHandling(async (videoId: string) => {
-  const [videoRecord] = await buildVideoWithUserQuery().where(
-    eq(videos.videoId, videoId)
-  );
-  return videoRecord;
-});
+// export const getVideoById = withErrorHandling(async (videoId: string) => {
+//   const [videoRecord] = await buildVideoWithUserQuery().where(
+//     eq(videos.videoId, videoId)
+//   );
+//   return videoRecord;
+// });
 
-export const getTranscript = withErrorHandling(async (videoId: string) => {
-  const response = await fetch(
-    `${BUNNY.TRANSCRIPT_URL}/${videoId}/captions/en-auto.vtt`
-  );
-  return response.text();
-});
+// export const getTranscript = withErrorHandling(async (videoId: string) => {
+//   const response = await fetch(
+//     `${BUNNY.TRANSCRIPT_URL}/${videoId}/captions/en-auto.vtt`
+//   );
+//   return response.text();
+// });
 
 export const incrementVideoViews = withErrorHandling(
   async (videoId: string) => {
@@ -255,40 +317,37 @@ export const updateVideoVisibility = withErrorHandling(
   }
 );
 
-export const getVideoProcessingStatus = withErrorHandling(
-  async (videoId: string) => {
-    const processingInfo = await apiFetch<BunnyVideoResponse>(
-      `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
-      { bunnyType: "stream" }
-    );
+// export const getVideoProcessingStatus = withErrorHandling(
+//   async (videoId: string, videoUrl:string) => {
+//     const processingInfo = await apiFetch(videoId,videoUrl
+//     );
 
-    return {
-      isProcessed: processingInfo.status === 4,
-      encodingProgress: processingInfo.encodeProgress || 0,
-      status: processingInfo.status,
-    };
-  }
-);
+//     return {
 
-export const deleteVideo = withErrorHandling(
-  async (videoId: string, thumbnailUrl: string) => {  
-    try {
-      await apiFetch(
-        `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
-        { method: "DELETE", bunnyType: "stream" }
-      );
+//       status: processingInfo.status,
+//     };
+//   }
+// );
 
-      const thumbnailPath = thumbnailUrl.split("thumbnails/")[1];
-      await apiFetch(
-        `${THUMBNAIL_STORAGE_BASE_URL}/thumbnails/${thumbnailPath}`,
-        { method: "DELETE", bunnyType: "storage", expectJson: false }
-      );
+// export const deleteVideo = withErrorHandling(
+//   async (videoId: string, thumbnailUrl: string) => {
+//     try {
+//       await apiFetch(
+//         `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
+//         { method: "DELETE", bunnyType: "stream" }
+//       );
 
-      await db.delete(videos).where(eq(videos.videoId, videoId));
-      revalidatePaths(["/", `/video/${videoId}`]);
-      return { success: true, message: "Video deleted successfully" };
-    } catch (error) {
-      return { success: false, message: "Failed to delete video", err:error };
-    }
-  }
-);
+//       const thumbnailPath = thumbnailUrl.split("thumbnails/")[1];
+//       await apiFetch(
+//         `${THUMBNAIL_STORAGE_BASE_URL}/thumbnails/${thumbnailPath}`,
+//         { method: "DELETE", bunnyType: "storage", expectJson: false }
+//       );
+
+//       await db.delete(videos).where(eq(videos.videoId, videoId));
+//       revalidatePaths(["/", `/video/${videoId}`]);
+//       return { success: true, message: "Video deleted successfully" };
+//     } catch (error) {
+//       return { success: false, message: "Failed to delete video", err:error };
+//     }
+//   }
+// );

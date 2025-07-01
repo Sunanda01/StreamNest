@@ -9,7 +9,7 @@ const page = async ({ params }: Params) => {
   // const { user,video } = await getVideoById(videoId);
   const videoRecord = await getVideoById(videoId);
   if (!videoRecord) redirect('/404');
-  const { user, video } = videoRecord;
+  const { user, video, } = videoRecord;
   return (
     <main className="wrapper page">
       <VideoDetailHeader
@@ -25,7 +25,7 @@ const page = async ({ params }: Params) => {
       />
       <section className="video-details">
         <div className="content">
-          <VideoPlayer videoId={video?.videoId} />
+          <VideoPlayer videoId={video?.videoId} videoUrl={video?.videoUrl} thumbnailUrl={video?.thumbnailUrl}/>
         </div>
       </section>
 
