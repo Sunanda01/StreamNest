@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/util";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import {
   incrementVideoViews,
 } from "@/lib/actions/video";
@@ -8,7 +8,6 @@ import {
 import { VideoPlayerProps } from "..";
 
 const VideoPlayer = ({ videoId, className, videoUrl, thumbnailUrl }: VideoPlayerProps) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
   useEffect(() => {
       const incrementView = async () => {
         try {

@@ -13,22 +13,6 @@ import { BeatLoader } from "react-spinners";
 import toast from "react-hot-toast";
 import { uploadThumbnailToCloudinary, uploadVideoToCloudinary } from "@/lib/Cloudinary/cloudinary_client";
 import { v4 as uuidv4 } from "uuid";
-// const uploadFileToBunny = (
-//   file: File,
-//   uploadUrl: string,
-//   accessKey: string
-// ): Promise<void> =>
-//   fetch(uploadUrl, {
-//     method: "PUT",
-//     headers: {
-//       "Content-Type": file.type,
-//       AccessKey: accessKey,
-//     },
-//     body: file,
-//   }).then((response) => {
-//     if (!response.ok)
-//       throw new Error(`Upload failed with status ${response.status}`);
-//   });
 
 const Upload = () => {
   const router = useRouter();

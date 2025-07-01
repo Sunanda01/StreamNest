@@ -1,11 +1,9 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
-import { useAtomValue } from "jotai";
 import { LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Navbar = () => {

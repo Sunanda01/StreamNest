@@ -1,8 +1,8 @@
 // Create Tables in Supabase
 import { config } from "dotenv";
-import { defineConfig } from "drizzle-kit";
+
 config({path:'./.env'});
-export default defineConfig({
+export default ({
     schema:'./drizzle/schema.ts',
     out:'./drizzle/migrations',
     dialect:'postgresql',

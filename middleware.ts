@@ -1,9 +1,7 @@
 // middleware.ts
-
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import aj, { createMiddleware, detectBot, shield } from "./lib/arcjet";
+// import { NextRequest, NextResponse } from "next/server";
+// import { auth } from "@/lib/auth";
+// import { headers } from "next/headers";
 
 // Optional: Session check
 // export async function middleware(request: NextRequest) {
@@ -20,6 +18,8 @@ import aj, { createMiddleware, detectBot, shield } from "./lib/arcjet";
 // }
 
 // Arcjet validation (optional, but you must export a default function)
+
+import aj, { createMiddleware, detectBot, shield } from "./lib/arcjet";
 const validate = aj
   .withRule(shield({ mode: "LIVE" }))
   .withRule(

@@ -71,7 +71,7 @@ git clone https://github.com/Sunanda01/StreamNest.git
 ## Add .env of this project
 
 ```bash
-NEXT_PUBLIC_BEST_URL=
+NEXT_PUBLIC_BASE_URL=
 NEXT_PUBLIC_BUNNY_STORAGE_ZONE=
 NEXT_PUBLIC_BUNNY_STORAGE_ACCESS_KEY=
 
