@@ -35,11 +35,15 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+---
+
 ## StreamNest
 
 A video streaming platform designed to deliver high-quality content with a smooth user experience that supports screen recording and uploading video.
 
 <img src="/public/screenshots/Poster.jpg" alt="Poster" />
+
+---
 
 ## Quick Glimpses
 
@@ -69,64 +73,91 @@ A video streaming platform designed to deliver high-quality content with a smoot
   </tr>
 </table>
 
+---
+
 ## Clone the repo
 
 ```bash
 git clone https://github.com/Sunanda01/StreamNest.git
 ```
+---
 
 ## Add .env of this project
 
 ```bash
-NEXT_PUBLIC_BASE_URL=
-NEXT_PUBLIC_BUNNY_STORAGE_ZONE=
-NEXT_PUBLIC_BUNNY_STORAGE_ACCESS_KEY=
+NEXT_PUBLIC_BASE_URL= 
 
 #Better Auth
 BETTER_AUTH_SECRET=
-BETTER_AUTH_URL=
+BETTER_AUTH_URL= 
 
-#Google Cloud
+#Google Cloud 
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
-#XATA POSTGRES
-XATA_API_KEY=
-DATABASE_URL_POSTGRES=
-DATABASE_URL=
-
-#Bunny
-BUNNY_LIBRARY_ID=
-BUNNY_STREAM_ACCESS_KEY=
-BUNNY_STORAGE_ACCESS_KEY=
-BUNNY_STORAGE_ZONE=
-
 #Arcjet
 ARCJET_API_KEY=
+
+#Supabase
+SUPABASE_PROJECT_PASSWORD=
+DATABASE_URL_POSTGRES=
+
+#Cloudinary
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
+NEXT_PUBLIC_CLOUDINARY_API_KEY=""
+CLOUDINARY_API_SECRET=""
+
 ```
+---
 
 ## Architecture Overview
 
 ```bash
-                 🌍 Client (Browser)
+                                  🌍 Client (Browser)
                         │
-                        ▼
-               ┌────────────────────┐
-               │     API Layer      │
-               │  (Next.js + SA)    │
-               └────────┬───────────┘
-                        │
-            ┌───────────▼───────────┐
-            │       Arcjet          │  ◄─ Bot detection, abuse filter
-            └───────────┬───────────┘
-                        │
-       ┌────────────────┴──────────────┐
-       ▼                               ▼
-┌──────────────┐              ┌──────────────────────┐
-│   Bunny CDN  │              │    Database Layer     │
-│  (HLS Video) │              │ Drizzle → PostgreSQL  │
-└──────────────┘              │       + Xata DB       │
-                              └──────────────────────┘
-
+         ┌──────────────┼──────────────────┐
+         │              │                  │
+         ▼              ▼                  ▼
+   Upload Video   Upload Thumbnail     View Video
+     (FormData)      (FormData)         (HLS/URL)
+         │              │                  │
+         ▼              ▼                  │
+ ┌────────────────┐ ┌────────────────┐     │
+ │ Cloudinary API │ │ Cloudinary API │     │
+ │ (video/upload) │ │ (image/upload) │     │
+ └────────────────┘ └────────────────┘     │
+         │              │                  │
+         ▼              ▼                  │
+    Secure URLs saved in ↓                 │
+                 ┌─────────────────────────┘
+                 │
+         ┌───────▼────────┐
+         │     API Layer  │
+         │ (Next.js + SA) │
+         └───────┬────────┘
+                 │
+          ┌──────▼──────┐
+          │   Arcjet    │   ◄─ Bot detection, abuse filter
+          └──────┬──────┘
+                 │
+      ┌──────────▼────────────────┐
+      │   Drizzle ORM (type-safe) │
+      └──────────┬────────────────┘
+                 │
+        ┌────────▼────────┐
+        │   Supabase DB   │
+        │ (PostgreSQL)    │
+        └─────────────────┘
 
 ```
+---
+
+## 🔄 Key Architecture Changes
+
+| Component            | Before                           | Now                                    |
+|----------------------|----------------------------------|----------------------------------------|
+| **Video Upload**     | Bunny CDN (HLS)                  | Cloudinary (via `/video/upload`)       |
+| **Thumbnail Upload** | Bunny / Static or Xata           | Cloudinary (`/image/upload`)           |
+| **Database**         | Xata + PostgreSQL (via Drizzle)  | Supabase PostgreSQL (via Drizzle ORM)  |
+| **Bot Protection**   | Arcjet                           | Arcjet (unchanged)                     |
+| **ORM**              | Drizzle                          | Drizzle (still used with Supabase)     |
