@@ -39,7 +39,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 A video streaming platform designed to deliver high-quality content with a smooth user experience that supports screen recording and uploading video.
 
-<img src="/public/screenshots/Poster.png" alt="Poster" />
+<img src="/public/screenshots/Poster.jpg" alt="Poster" />
 
 ## Quick Glimpses
 
