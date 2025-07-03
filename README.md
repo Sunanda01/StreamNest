@@ -37,9 +37,18 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ---
 
-## StreamNest
+## 📌 NOTE
+This is the updated version of the original project: [Video_Streaming](https://github.com/Sunanda01/Video_Streaming.git)
 
-A video streaming platform designed to deliver high-quality content with a smooth user experience that supports screen recording and uploading video.
+---
+
+## ▶️ What’s New in StreamNest
+
+> StreamNest is a refactored and production-ready evolution of the original Video_Streaming app — built with better architecture, improved developer experience, and scalable backend services.
+
+> A video streaming platform designed to deliver high-quality content with a smooth user experience that supports screen recording and uploading video.
+
+---
 
 <img src="/public/screenshots/Poster.jpg" alt="Poster" />
 
@@ -53,7 +62,7 @@ A video streaming platform designed to deliver high-quality content with a smoot
      <td>Home Page<br><img src="/public/screenshots/home.png" alt="Home Page" /></td>
     </tr>
      <tr>
-    <td colspan=2>Home2 Page<br><img src="/public/screenshots/home2.png" alt="Home2 Page" /></td>
+    <td colspan=2>Home Page<br><img src="/public/screenshots/home2.png" alt="Home Page" /></td>
     </tr>
     <tr>
     <td>Filter<br/> <img src="/public/screenshots/filter.png" alt="Filter" /></td>
@@ -85,6 +94,7 @@ git clone https://github.com/Sunanda01/StreamNest.git
 ## Add .env of this project
 
 ```bash
+
 NEXT_PUBLIC_BASE_URL= 
 
 #Better Auth
@@ -108,12 +118,14 @@ NEXT_PUBLIC_CLOUDINARY_API_KEY=""
 CLOUDINARY_API_SECRET=""
 
 ```
+
 ---
 
 ## Architecture Overview
 
 ```bash
-                                  🌍 Client (Browser)
+
+              🌍 Client (Browser)
                         │
          ┌──────────────┼──────────────────┐
          │              │                  │
@@ -161,3 +173,5 @@ CLOUDINARY_API_SECRET=""
 | **Database**         | Xata + PostgreSQL (via Drizzle)  | Supabase PostgreSQL (via Drizzle ORM)  |
 | **Bot Protection**   | Arcjet                           | Arcjet (unchanged)                     |
 | **ORM**              | Drizzle                          | Drizzle (still used with Supabase)     |
+
+---
