@@ -49,7 +49,7 @@ A video streaming platform designed to deliver high-quality content with a smoot
      <td>Home Page<br><img src="/public/screenshots/home.png" alt="Home Page" /></td>
     </tr>
      <tr>
-    <td>Home2 Page<br><img src="/public/screenshots/home2.png" alt="Home2 Page" /></td>
+    <td colspan=2>Home2 Page<br><img src="/public/screenshots/home2.png" alt="Home2 Page" /></td>
     </tr>
     <tr>
     <td>Filter<br/> <img src="/public/screenshots/filter.png" alt="Filter" /></td>
