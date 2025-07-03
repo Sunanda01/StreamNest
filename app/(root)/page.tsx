@@ -7,6 +7,7 @@ import { getAllVideos } from "@/lib/actions/video";
 import { auth } from "@/lib/auth";
 import { Video } from "lucide-react";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 const HomePage = async ({ searchParams }: SearchParams) => {
   const { query, filter, page } = await searchParams;
@@ -22,7 +23,7 @@ const HomePage = async ({ searchParams }: SearchParams) => {
   const user = session?.user;
 
   if (!session) {
-    return <EmptyState title="Something went wrong" description="Please try again later." icon={Video} />;
+    redirect('/sign-in');
   }
 
   const hasAnyVideo = otherVideos.length > 0 || userVideos.length > 0;
