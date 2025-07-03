@@ -2,14 +2,13 @@
 import { cn } from "@/lib/util";
 import { Check, ChevronDown, Menu } from "lucide-react";
 import { useState } from "react";
+import {filterOptions} from '../constants';
 const DropdownList = ({
-  options,
   selectedOption,
   onOptionSelect,
-  triggerElement,
 }: import("..").DropdownListProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const filterOptions = ["Most Recent", "Most Liked"];
+
   const handleOptionClick = (option: string) => {
     onOptionSelect(option);
     setIsOpen(false);
@@ -22,24 +21,26 @@ const DropdownList = ({
           <figure className="flex gap-2">
             <Menu className="h-5 w-5" />
             <span className="tracking-wide flex gap-4">
-              Most Recently <ChevronDown className="h-5 w-5" />
+              {filterOptions[selectedOption] || "Sort"}
+              <ChevronDown className="h-5 w-5" />
             </span>
           </figure>
         </div>
       </div>
+
       {isOpen && (
         <ul className="dropdown">
-          {filterOptions.map((option, index) => (
+          {Object.entries(filterOptions).map(([key, label]) => (
             <li
-              key={option}
+              key={key}
               className={cn("list-item tracking-wide", {
-                "bg-pink-100 text-white": selectedOption === option,
+                "bg-pink-100 text-white": selectedOption === key,
               })}
-              onClick={() => handleOptionClick(option)}
+              onClick={() => handleOptionClick(key)}
             >
               <span className="flex gap-2 items-center">
-                {option}
-              {selectedOption === option && <Check className="h-5 w-5" />}
+                {label}
+                {selectedOption === key && <Check className="h-5 w-5" />}
               </span>
             </li>
           ))}

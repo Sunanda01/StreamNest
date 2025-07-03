@@ -76,10 +76,10 @@ declare interface VideoCardProps {
   description: string;
   title: string;
   thumbnail: string;
-  videoUrl:string;
+  videoUrl: string;
   videoId: string;
   thumbnailUrl: string;
-  userId:string;
+  userId: string;
   userImg: string;
   username: string;
   createdAt: Date;
@@ -92,6 +92,7 @@ declare interface VideoDetailHeaderProps {
   title: string;
   createdAt: Date;
   description: string;
+  views: number;
   userImg: string | null | undefined;
   username?: string;
   videoId: string;
@@ -101,8 +102,8 @@ declare interface VideoDetailHeaderProps {
 }
 
 declare interface VideoPlayerProps {
-  thumbnailUrl:string;
-  videoUrl:string;
+  thumbnailUrl: string;
+  videoUrl: string;
   videoId: string;
   className?: string;
 }
@@ -127,7 +128,7 @@ declare interface VideoDetails {
   videoId: string;
   title: string;
   description: string;
-  videoUrl:string;
+  videoUrl: string;
   thumbnailUrl: string;
   visibility: Visibility;
   duration?: number | null;
@@ -252,7 +253,6 @@ declare interface ParamsWithSearch {
 }
 
 declare interface DropdownListProps {
-  options: string[];
   selectedOption: string;
   onOptionSelect: (option: string) => void;
   triggerElement: ReactNode;

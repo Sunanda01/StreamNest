@@ -13,7 +13,8 @@ const page = async ({ params }: Params) => {
   return (
     <main className="wrapper page">
       <VideoDetailHeader
-      description={video.description}
+        views={video.views}
+        description={video.description}
         title={video.title}
         createdAt={video.createdAt}
         userImg={user?.image}
@@ -25,7 +26,7 @@ const page = async ({ params }: Params) => {
       />
       <section className="video-details">
         <div className="content">
-          <VideoPlayer videoId={video?.videoId} videoUrl={video?.videoUrl} thumbnailUrl={video?.thumbnailUrl}/>
+          <VideoPlayer videoId={video?.videoId} videoUrl={video?.videoUrl} thumbnailUrl={video?.thumbnailUrl} />
         </div>
       </section>
 

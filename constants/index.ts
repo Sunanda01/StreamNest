@@ -5,12 +5,19 @@ export const MAX_THUMBNAIL_SIZE = 10 * 1024 * 1024;
 
 export const emojis = ["😂", "😍", "👍"];
 
-export const filterOptions = [
-  "Most Viewed",
-  "Most Recent",
-  "Oldest First",
-  "Least Viewed",
-];
+export const filterOptions: Record<string, string> = {
+    most_recent: "Most Recent",
+    less_recent:"Oldest First",
+    most_liked: "Most Liked",
+    less_liked:"Least Liked"
+  };
+
+// export const filterOptions = [
+//   "Most Viewed",
+//   "Most Recent",
+//   "Oldest First",
+//   "Least Viewed",
+// ];
 
 export const visibilities: Visibility[] = ["public", "private"];
 

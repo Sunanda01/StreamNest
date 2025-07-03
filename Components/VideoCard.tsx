@@ -1,11 +1,11 @@
 "use client"
-import { Eye, LinkIcon, Loader, TrashIcon } from "lucide-react"
+import { Eye, LinkIcon, Loader, ThumbsUp, TrashIcon } from "lucide-react"
 import Image from "next/image"
 import { VideoCardProps, Visibility } from ".."
 import { useRouter } from "next/navigation"
-import { deleteVideo, updateVideoVisibility } from "@/lib/actions/video"
+import { deleteVideo, likeCount, updateVideoVisibility } from "@/lib/actions/video"
 import toast from "react-hot-toast"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { authClient } from "@/lib/auth-client"
 import { cn } from "@/lib/util"
 
@@ -29,6 +29,7 @@ const VideoCard = ({
   const [isOpen, setIsOpen] = useState(false);
   const [removeVideoUi, setRemoveVideoUi] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [count, setCount] = useState(0);
   const { data: session } = authClient.useSession();
   // console.log(session?.user);
   const session_userId = session?.user?.id;
@@ -50,7 +51,26 @@ const VideoCard = ({
     setIsOpen(true);
     router.refresh();
   }
+  useEffect(() => {
+    const fetchCount = async () => {
+      const res = await likeCount(videoId);
+      if (res.success) setCount(res?.count || 0);
+      else toast.error(res?.message || "Unable to fetch like");
+    };
 
+    fetchCount();
+  }, [videoId])
+  
+  const formatVideoDuration = (durationInSeconds: number): string => {
+  if (durationInSeconds < 60) {
+    return `${durationInSeconds}s`;
+  }
+
+  const minutes = Math.floor(durationInSeconds / 60);
+  const seconds = Math.floor(durationInSeconds % 60);
+
+  return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
+};
 
   return (
     <div className="video-card">
@@ -64,10 +84,16 @@ const VideoCard = ({
               <p>{visibility}</p>
             </figcaption>
           </figure>
-          <aside className="mt-2">
-            <Eye className="h-5 w-5" />
-            <span>{views}</span>
-          </aside>
+          <div className="flex gap-5">
+            <aside className="mt-3 flex justify-center items-center gap-1">
+              <Eye className="h-6 w-6 fill-gray-400 text-white" />
+              <span className="font-bold text-lg">{views}</span>
+            </aside>
+            <aside className="mt-3 flex justify-center items-center gap-1">
+              <ThumbsUp className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="font-bold text-lg">{count}</span>
+            </aside>
+          </div>
         </div>
         <h2>
           {title} - {" "}
@@ -95,8 +121,8 @@ const VideoCard = ({
       <button onClick={(e) => {
         e.stopPropagation()
         router.push(`/video/${videoId}`)
-      }} className="copy-btn hover:bg-blue-500">
-        <LinkIcon className="h-4 w-4 hover:text-white" />
+      }} className="copy-btn hover:bg-blue-500 hover:text-white">
+        <LinkIcon className="h-4 w-4 " />
       </button>
 
       <button
@@ -105,10 +131,10 @@ const VideoCard = ({
           setIsOpen(true)
         }}
         disabled={session_userId !== userId}
-        className={cn("copy-btn mt-8 hover:bg-red-400",session_userId !== userId && "hidden")} >
+        className={cn("copy-btn mt-8 hover:bg-red-400 hover:text-white  ", session_userId !== userId && "hidden")} >
         {removeVideoUi
-          ? <Loader className="h-4 w-4 fill-black hover:fill-white hover:text-white" />
-          : <TrashIcon className="h-4 w-4 fill-black hover:fill-white hover:text-white" />}
+          ? <Loader className="h-4 w-4 " />
+          : <TrashIcon className="h-4 w-4   " />}
       </button>
 
       {isOpen && (
@@ -133,7 +159,7 @@ const VideoCard = ({
 
       {duration && (
         <div className="duration tracking-widest mt-0.5">
-          {(duration / 60).toFixed(2)} min
+          {formatVideoDuration(duration)}
         </div>
       )}
 

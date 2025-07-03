@@ -1,10 +1,14 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ilike, sql } from "drizzle-orm";
-import { videos } from "@/drizzle/schema";
-import { ApiFetchOptions, MediaStreams, RecordingHandlers, TranscriptEntry } from "..";
+import { likes, videos } from "@/drizzle/schema";
+import {
+  ApiFetchOptions,
+  MediaStreams,
+  RecordingHandlers,
+  TranscriptEntry,
+} from "..";
 import { DEFAULT_RECORDING_CONFIG, DEFAULT_VIDEO_CONFIG } from "@/constants";
-
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -103,13 +107,20 @@ export const withErrorHandling = <T, A extends unknown[]>(
 
 export const getOrderByClause = (filter?: string) => {
   switch (filter) {
-    case "Most Viewed":
-      return sql`${videos.views} DESC`;
-    case "Least Viewed":
-      return sql`${videos.views} ASC`;
-    case "Oldest First":
+    case "most_recent":
+      return sql`${videos.createdAt} DESC`;
+    case "less_recent":
       return sql`${videos.createdAt} ASC`;
-    case "Most Recent":
+    case "most_liked":
+      return sql`(
+      SELECT COUNT(*) FROM ${likes}
+      WHERE ${likes.videoId} = ${videos.videoId}
+    ) DESC`;
+    case "less_liked":
+      return sql`(
+      SELECT COUNT(*) FROM ${likes}
+      WHERE ${likes.videoId} = ${videos.videoId}
+    ) ASC`;
     default:
       return sql`${videos.createdAt} DESC`;
   }
@@ -285,21 +296,23 @@ export function parseTranscript(transcript: string): TranscriptEntry[] {
 
   return result;
 }
-
 export function daysAgo(inputDate: Date): string {
   const input = new Date(inputDate);
   const now = new Date();
 
-  const diffTime = now.getTime() - input.getTime();
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const diffMs = now.getTime() - input.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays <= 0) {
-    return "Today";
-  } else if (diffDays === 1) {
-    return "1 day ago";
-  } else {
-    return `${diffDays} days ago`;
-  }
+  if (diffMinutes < 1) return "Just now";
+  if (diffMinutes < 60)
+    return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
+
+  return input.toLocaleDateString(); // e.g., "6/30/2025"
 }
 
 export const createIframeLink = (videoId: string) =>

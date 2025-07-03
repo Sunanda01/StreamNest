@@ -9,9 +9,8 @@ import {
   getOrderByClause,
   withErrorHandling,
 } from "../util";
-import { BUNNY } from "@/constants";
 import { db } from "@/drizzle/db";
-import { user, videos } from "@/drizzle/schema";
+import { likes, user, videos } from "@/drizzle/schema";
 import { revalidatePath } from "next/cache";
 import aj, { fixedWindow, request } from "../arcjet";
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
@@ -220,19 +219,76 @@ export const updateVideoVisibility = withErrorHandling(
   async (videoId: string, visibility: Visibility, userIdParameter: string) => {
     try {
       await validateWithArcjet(videoId);
-    const session = await auth.api.getSession({ headers: await headers() });
-    const currentUserId = session?.user.id;
-    if (!currentUserId || currentUserId !== userIdParameter) {
-      return { success: false, message: "You are not allowed to update this video." };
-    }
-    await db
-      .update(videos)
-      .set({ visibility, updatedAt: new Date() })
-      .where(eq(videos.videoId, videoId));
-    return { success: true, message: "Visibility updated successfully" };
+      const session = await auth.api.getSession({ headers: await headers() });
+      const currentUserId = session?.user.id;
+      if (!currentUserId || currentUserId !== userIdParameter) {
+        return {
+          success: false,
+          message: "You are not allowed to update this video.",
+        };
+      }
+      await db
+        .update(videos)
+        .set({ visibility, updatedAt: new Date() })
+        .where(eq(videos.videoId, videoId));
+      return { success: true, message: "Visibility updated successfully" };
     } catch (error) {
       console.error(error);
       return { success: false, message: "Failed to Update" };
     }
   }
 );
+
+export const likeVideo = withErrorHandling(async (videoId: string) => {
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return { success: false, message: "Unauthorized" };
+    }
+
+    const existingLike = await db
+      .select()
+      .from(likes)
+      .where(and(eq(likes.userId, userId), eq(likes.videoId, videoId)))
+      .limit(1);
+
+    if (existingLike.length > 0)
+      return { success: false, message: "Already Liked!!!" };
+
+    await db.insert(likes).values({ userId, videoId });
+
+    return { success: true, message: "Liked Video" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error, message: "Something Went Wrong!!!" };
+  }
+});
+
+export const isVideoLiked = withErrorHandling(async (videoId: string) => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
+
+  if (!userId) return { success: false, liked: false };
+
+  const result = await db
+    .select()
+    .from(likes)
+    .where(and(eq(likes.userId, userId), eq(likes.videoId, videoId)))
+    .limit(1);
+
+  return { success: true, liked: result.length > 0 };
+});
+
+export const likeCount = withErrorHandling(async (videoId: string) => {
+  try {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(likes)
+      .where(eq(likes.videoId, videoId));
+    return { success: true, count: result[0]?.count ?? 0 };
+  } catch (error) {
+    return { success: false, message: "Failed to fetch count" };
+  }
+});

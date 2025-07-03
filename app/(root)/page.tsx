@@ -10,7 +10,7 @@ import { headers } from "next/headers";
 
 const HomePage = async ({ searchParams }: SearchParams) => {
   const { query, filter, page } = await searchParams;
-  const { videos, pagination } = await getAllVideos(
+  const { videos = [], pagination } = await getAllVideos(
     query,
     filter,
     Number(page) || 1
@@ -19,22 +19,26 @@ const HomePage = async ({ searchParams }: SearchParams) => {
     headers: await headers(),
   });
   const user = session?.user;
-  const sessionuserVideo = videos.filter(((video) => video?.user?.id === user?.id))
-  const videoByOtherUser = videos.filter(((video) => video?.user?.id !== user?.id))
+  const sessionuserVideo = Array.isArray(videos) ? videos.filter(((video) => video?.user?.id === user?.id)) : [];
+  const videoByOtherUser = Array.isArray(videos) ? videos.filter(((video) => video?.user?.id !== user?.id)) : [];
+  if (!session || !videos) {
+    return <EmptyState title="Something went wrong" description="Please try again later." icon={Video} />;
+  }
+
 
   return (
-    <main className="wrapper page">
+    <main className="wrapper page"> 
 
 
       <Header subHeader="Public Library" title="All videos" />
-      {videos.length > 0 ? ("") : (<EmptyState
+      {sessionuserVideo.length === 0 && videoByOtherUser.length === 0 && (<EmptyState
         icon={Video}
         title="No Video Found"
         description="Try adjusting your search"
       />)}
       {videoByOtherUser?.length > 0 ? (
         <section className="video-grid">
-          {videos.map(({ video, user }) => (
+          {videoByOtherUser.map(({ video, user }) => (
             <VideoCard
               key={video.videoId}
               {...video}
@@ -61,7 +65,7 @@ const HomePage = async ({ searchParams }: SearchParams) => {
         <>
           <h1 className="tracking-normal text-xl lg:text-3xl md:text-2xl font-bold">Videos Uploaded By You</h1>
           <section className="video-grid">
-            {videos.map(({ video, user }) => (
+            {sessionuserVideo.map(({ video, user }) => (
               <VideoCard
                 key={video.videoId}
                 {...video}

@@ -19,7 +19,7 @@ const page = async ({ params, searchParams }: ParamsWithSearch) => {
         title={user.name}
         userImg={user.image || "/assets/images/dummy.jpg"}
       />
-      {videos.length > 0 ? ("") : (<EmptyState
+      {publicVideos.length === 0 && privateVideos.length === 0 && (<EmptyState
         icon={Video}
         title="No Video Found"
         description="Share Your First Video With Others 😎"

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, integer, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, integer, uuid,uniqueIndex } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
                     id: text('id').primaryKey(),
@@ -61,5 +61,16 @@ export const videos = pgTable("videos", {
   duration: integer("duration"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});                
-export const schema={user,session,account,verification,videos}
+});  
+
+export const likes = pgTable("likes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id").notNull(),
+  videoId: text("video_id").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  uniqueUserVideo:uniqueIndex("unique_user_video").on(table.userId,table.videoId),
+}));
+
+export const schema={user,session,account,verification,videos,likes}
+

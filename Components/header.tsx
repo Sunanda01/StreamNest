@@ -8,7 +8,7 @@ import RecordScreen from "./RecordScreen";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { updateURLParams } from "@/lib/util";
-import { filterOptions } from "@/constants";
+
 
 const Header = ({ subHeader, title, userImg }: SharedHeaderProps) => {
   const router = useRouter();
@@ -20,12 +20,12 @@ const Header = ({ subHeader, title, userImg }: SharedHeaderProps) => {
   );
 
   const [selectedFilter, setSelectedFilter] = useState(
-    searchParams.get("filter") || "Most Recent"
+    searchParams.get("filter") || "recent"
   );
 
   useEffect(() => {
     setSearchQuery(searchParams.get("query") || "");
-    setSelectedFilter(searchParams.get("filter") || "Most Recent");
+    setSelectedFilter(searchParams.get("filter") || "recent");
   }, [searchParams]);
 
   useEffect(() => {
@@ -102,12 +102,11 @@ const Header = ({ subHeader, title, userImg }: SharedHeaderProps) => {
           />
           <Search className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400 w-4 h-4" />
         </div>
-        {/* <DropdownList
-          options={filterOptions}
+        <DropdownList
           selectedOption={selectedFilter}
           onOptionSelect={handleFilterChange}
           triggerElement={renderFilterTrigger()}
-        /> */}
+        />
       </section>
     </header>
   );
