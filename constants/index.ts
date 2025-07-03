@@ -9,7 +9,8 @@ export const filterOptions: Record<string, string> = {
     most_recent: "Most Recent",
     less_recent:"Oldest First",
     most_liked: "Most Liked",
-    less_liked:"Least Liked"
+    less_liked:"Least Liked",
+    most_viewed:"Most Viewed"
   };
 
 // export const filterOptions = [

@@ -107,6 +107,8 @@ export const withErrorHandling = <T, A extends unknown[]>(
 
 export const getOrderByClause = (filter?: string) => {
   switch (filter) {
+    case "most_viewed":
+      return sql`${videos.views} DESC`;
     case "most_recent":
       return sql`${videos.createdAt} DESC`;
     case "less_recent":
@@ -314,9 +316,6 @@ export function daysAgo(inputDate: Date): string {
 
   return input.toLocaleDateString(); // e.g., "6/30/2025"
 }
-
-export const createIframeLink = (videoId: string) =>
-  `https://iframe.mediadelivery.net/embed/451794/${videoId}?autoplay=true&preload=true`;
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const doesTitleMatch = (videos: any, searchQuery: string) =>

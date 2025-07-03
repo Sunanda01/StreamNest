@@ -7,8 +7,8 @@ import { Video } from "lucide-react";
 
 const page = async ({ params, searchParams }: ParamsWithSearch) => {
   const { id } = await params;
-  const { query, flter } = await searchParams;
-  const { user, videos } = await getAllVideosByUser(id, query, flter);
+  const { query, filter } = await searchParams;
+  const { user, videos } = await getAllVideosByUser(id, query, filter);
   if (!user) return "/404";
   const publicVideos = videos.filter(({ video }) => video.visibility === "public");
   const privateVideos = videos.filter(({ video }) => video.visibility === "private");
@@ -58,6 +58,8 @@ const page = async ({ params, searchParams }: ParamsWithSearch) => {
           </section>
         </div>
       ) : ("")}
+
+   
     </div>
   );
 };

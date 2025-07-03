@@ -8,6 +8,7 @@ import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
 import { authClient } from "@/lib/auth-client"
 import { cn } from "@/lib/util"
+import LikeButton from "./LikeButton"
 
 const VideoCard = ({
   id,
@@ -60,21 +61,27 @@ const VideoCard = ({
 
     fetchCount();
   }, [videoId])
-  
+
   const formatVideoDuration = (durationInSeconds: number): string => {
-  if (durationInSeconds < 60) {
-    return `${durationInSeconds}s`;
-  }
+    if (durationInSeconds < 60) {
+      return `${durationInSeconds}s`;
+    }
 
-  const minutes = Math.floor(durationInSeconds / 60);
-  const seconds = Math.floor(durationInSeconds % 60);
+    const minutes = Math.floor(durationInSeconds / 60);
+    const seconds = Math.floor(durationInSeconds % 60);
 
-  return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
-};
+    return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
+  };
 
   return (
-    <div className="video-card">
-      <Image src={thumbnail} alt={thumbnail} width={290} height={160} priority />
+    // bg-gradient-to-tr from-teal-100 via-white to-cyan-100
+
+    <div className="video-card rounded bg-gradient-to-br from-slate-100 via-gray-50 to-slate-200
+
+">
+      <div className="h-full w-full flex justify-center items-center rounded p-1">
+        <Image src={thumbnail} alt={thumbnail} width={300} height={100} priority className="rounded h-[100%] w-[100%] shadow-md shadow-slate-600" />
+      </div>
       <article>
         <div>
           <figure>
@@ -84,26 +91,23 @@ const VideoCard = ({
               <p>{visibility}</p>
             </figcaption>
           </figure>
-          <div className="flex gap-5">
-            <aside className="mt-3 flex justify-center items-center gap-1">
-              <Eye className="h-6 w-6 fill-gray-400 text-white" />
-              <span className="font-bold text-lg">{views}</span>
-            </aside>
-            <aside className="mt-3 flex justify-center items-center gap-1">
-              <ThumbsUp className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              <span className="font-bold text-lg">{count}</span>
-            </aside>
-          </div>
-        </div>
-        <h2>
-          {title} - {" "}
-          {createdAt.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })}
-        </h2>
 
+        </div>
+        <h2 >
+          {title} - {" "}
+          <span className="text-gray-400 text-sm">
+            {createdAt.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </span>
+        </h2>
+        <div className="flex gap-5">
+
+          <LikeButton videoId={videoId} views={views} />
+
+        </div>
 
         <button
           onClick={() => setIsVisible((prev) => !prev)}
@@ -164,31 +168,29 @@ const VideoCard = ({
       )}
 
       {isVisible && (
-        <ul className="bg-slate-100   rounded-md shadow-md flex flex-col ml-2 mr-2 mb-2">
+        <ul className="absolute z-50 top-full mt-2 right-3 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
           {visible.map((v) => (
             <li
               key={v.value}
-              className="text-sm px-3 py-2 hover:bg-teal-100 cursor-pointer w-full justify-center items-center flex rounded-md font-bold tracking-wide text-teal-700"
+              className="px-4 py-2 text-sm text-gray-700 hover:bg-teal-100 cursor-pointer font-medium rounded-md"
               onClick={async () => {
                 const res = await updateVideoVisibility(videoId, v.value as Visibility, userId);
                 if (res.success) {
                   toast.success(res?.message);
-                  setIsVisible(false);
                   router.refresh();
-                }
-                else {
+                } else {
                   toast.error(res?.message);
-                  setIsVisible(false);
-                  router.refresh();
                 }
+                setIsVisible(false);
+                router.refresh();
               }}
             >
               {v.label}
-
             </li>
           ))}
         </ul>
       )}
+
 
     </div>
   )

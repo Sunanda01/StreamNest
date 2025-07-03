@@ -13,7 +13,7 @@ import { db } from "@/drizzle/db";
 import { likes, user, videos } from "@/drizzle/schema";
 import { revalidatePath } from "next/cache";
 import aj, { fixedWindow, request } from "../arcjet";
-import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, ne, or, sql } from "drizzle-orm";
 import { BunnyVideoResponse, VideoDetails, Visibility } from "@/index";
 import cloudinary from "../Cloudinary/cloudinary_server";
 
@@ -131,46 +131,57 @@ export const getAllVideos = withErrorHandling(
     searchQuery: string = "",
     sortFilter?: string,
     pageNumber: number = 1,
-    pageSize: number = 4
+    pageSize: number = 4 // Make it 4 now, not 8
   ) => {
     const session = await auth.api.getSession({ headers: await headers() });
     const currentUserId = session?.user.id;
 
-    const canSeeTheVideos = or(
+    const publicCondition = and(
       eq(videos.visibility, "public"),
-      eq(videos.userId, currentUserId!)
+      ne(videos.userId, currentUserId!)
     );
 
-    const whereCondition = searchQuery.trim()
-      ? and(canSeeTheVideos, doesTitleMatch(videos, searchQuery))
-      : canSeeTheVideos;
+    const userCondition = eq(videos.userId, currentUserId!);
 
-    // Count total for pagination
-    const [{ totalCount }] = await db
+    const applySearch = (condition: any) =>
+      searchQuery.trim()
+        ? and(condition, doesTitleMatch(videos, searchQuery))
+        : condition;
+
+    // Total counts for pagination (if needed separately)
+    const [{ totalCount: totalOthers }] = await db
       .select({ totalCount: sql<number>`count(*)` })
       .from(videos)
-      .where(whereCondition);
-    const totalVideos = Number(totalCount || 0);
-    const totalPages = Math.ceil(totalVideos / pageSize);
+      .where(applySearch(publicCondition));
 
-    // Fetch paginated, sorted results
-    const videoRecords = await buildVideoWithUserQuery()
-      .where(whereCondition)
-      .orderBy(
-        sortFilter
-          ? getOrderByClause(sortFilter)
-          : sql`${videos.createdAt} DESC`
-      )
+    const [{ totalCount: totalUser }] = await db
+      .select({ totalCount: sql<number>`count(*)` })
+      .from(videos)
+      .where(applySearch(userCondition));
+
+    // Query videos from others
+    const otherVideos = await buildVideoWithUserQuery()
+      .where(applySearch(publicCondition))
+      .orderBy(getOrderByClause(sortFilter) ?? sql`${videos.createdAt} DESC`)
+      .limit(pageSize)
+      .offset((pageNumber - 1) * pageSize);
+
+    // Query videos from the logged-in user
+    const userVideos = await buildVideoWithUserQuery()
+      .where(applySearch(userCondition))
+      .orderBy(getOrderByClause(sortFilter) ?? sql`${videos.createdAt} DESC`)
       .limit(pageSize)
       .offset((pageNumber - 1) * pageSize);
 
     return {
-      videos: videoRecords,
+      otherVideos,
+      userVideos,
       pagination: {
         currentPage: pageNumber,
-        totalPages,
-        totalVideos,
-        pageSize,
+        totalPages: Math.max(
+          Math.ceil(totalOthers / pageSize),
+          Math.ceil(totalUser / pageSize)
+        ),
       },
     };
   }
@@ -207,9 +218,7 @@ export const getAllVideosByUser = withErrorHandling(
 
     const userVideos = await buildVideoWithUserQuery()
       .where(and(...conditions))
-      .orderBy(
-        sortFilter ? getOrderByClause(sortFilter) : desc(videos.createdAt)
-      );
+      .orderBy(getOrderByClause(sortFilter) ?? sql`${videos.createdAt} DESC`);
 
     return { user: userInfo, videos: userVideos, count: userVideos.length };
   }

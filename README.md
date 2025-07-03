@@ -48,6 +48,17 @@ A video streaming platform designed to deliver high-quality content with a smoot
     <td>SignIn Page<br><img src="/public/screenshots/sign-in.png" alt="Register Page" /></td>
      <td>Home Page<br><img src="/public/screenshots/home.png" alt="Home Page" /></td>
     </tr>
+     <tr>
+    <td>Home2 Page<br><img src="/public/screenshots/home2.png" alt="Home2 Page" /></td>
+    </tr>
+    <tr>
+    <td>Filter<br/> <img src="/public/screenshots/filter.png" alt="Filter" /></td>
+     <td>Update Visibility<br/> <img src="/public/screenshots/update_visibility.png" alt="Update Visibility" /></td>
+  </tr>
+   <tr>
+    <td>Video Detail Page<br/> <img src="/public/screenshots/video-detail.png" alt="Video Detail Page" /></td>
+     <td>Profile Page<br/> <img src="/public/screenshots/profile.png" alt="Profile Page" /></td>
+  </tr>
    <tr>
     <td>Start Recording<br/> <img src="/public/screenshots/start-recording.png" alt="Start Recording" /></td>
      <td>Stop Recording<br/> <img src="/public/screenshots/stop-recording.png" alt="Stop Recording" /></td>
@@ -55,10 +66,6 @@ A video streaming platform designed to deliver high-quality content with a smoot
    <tr>
     <td>Screen Recording<br/> <img src="/public/screenshots/screen-recording.png" alt="Screen Recording" /></td>
      <td>Upload Video<br/> <img src="/public/screenshots/uplaod-video.png" alt="Upload Video" /></td>
-  </tr>
-  <tr>
-    <td>Video Detail Page<br/> <img src="/public/screenshots/video-detail.png" alt="Video Detail Page" /></td>
-     <td>Profile Page<br/> <img src="/public/screenshots/profile.png" alt="Profile Page" /></td>
   </tr>
 </table>
 
@@ -79,7 +86,7 @@ NEXT_PUBLIC_BUNNY_STORAGE_ACCESS_KEY=
 BETTER_AUTH_SECRET=
 BETTER_AUTH_URL=
 
-#Google Cloud 
+#Google Cloud
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
@@ -99,6 +106,7 @@ ARCJET_API_KEY=
 ```
 
 ## Architecture Overview
+
 ```bash
                  🌍 Client (Browser)
                         │
@@ -122,4 +130,3 @@ ARCJET_API_KEY=
 
 
 ```
-

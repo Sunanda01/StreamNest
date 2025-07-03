@@ -10,35 +10,39 @@ import { headers } from "next/headers";
 
 const HomePage = async ({ searchParams }: SearchParams) => {
   const { query, filter, page } = await searchParams;
-  const { videos = [], pagination } = await getAllVideos(
+  const { otherVideos = [], userVideos = [], pagination } = await getAllVideos(
     query,
     filter,
     Number(page) || 1
   );
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  console.log("otherVideos", otherVideos);
+  console.log("userVideos", userVideos);
+
+  const session = await auth.api.getSession({ headers: await headers() });
   const user = session?.user;
-  const sessionuserVideo = Array.isArray(videos) ? videos.filter(((video) => video?.user?.id === user?.id)) : [];
-  const videoByOtherUser = Array.isArray(videos) ? videos.filter(((video) => video?.user?.id !== user?.id)) : [];
-  if (!session || !videos) {
+
+  if (!session) {
     return <EmptyState title="Something went wrong" description="Please try again later." icon={Video} />;
   }
 
+  const hasAnyVideo = otherVideos.length > 0 || userVideos.length > 0;
 
   return (
-    <main className="wrapper page"> 
-
-
+    <main className="wrapper page">
       <Header subHeader="Public Library" title="All videos" />
-      {sessionuserVideo.length === 0 && videoByOtherUser.length === 0 && (<EmptyState
-        icon={Video}
-        title="No Video Found"
-        description="Try adjusting your search"
-      />)}
-      {videoByOtherUser?.length > 0 ? (
+
+      {!hasAnyVideo && (
+        <EmptyState
+          icon={Video}
+          title="No Video Found"
+          description="Try adjusting your search"
+        />
+      )}
+
+      {/* Videos by others */}
+      {otherVideos?.length > 0 && (
         <section className="video-grid">
-          {videoByOtherUser.map(({ video, user }) => (
+          {otherVideos.map(({ video, user }) => (
             <VideoCard
               key={video.videoId}
               {...video}
@@ -48,24 +52,16 @@ const HomePage = async ({ searchParams }: SearchParams) => {
             />
           ))}
         </section>
-      ) : ("")}
-
-      {pagination?.totalPages > 1 && (
-        <Pagination
-          currentPage={pagination.currentPage}
-          totalPages={pagination.totalPages}
-          queryString={query}
-          filterString={filter}
-        />
       )}
 
-
-
-      {sessionuserVideo?.length > 0 && (
+      {/* Your own videos */}
+      {userVideos?.length > 0 && (
         <>
-          <h1 className="tracking-normal text-xl lg:text-3xl md:text-2xl font-bold">Videos Uploaded By You</h1>
+          <h1 className="tracking-normal text-xl lg:text-3xl md:text-2xl font-bold">
+            Videos Uploaded By You
+          </h1>
           <section className="video-grid">
-            {sessionuserVideo.map(({ video, user }) => (
+            {userVideos.map(({ video, user }) => (
               <VideoCard
                 key={video.videoId}
                 {...video}
@@ -76,6 +72,15 @@ const HomePage = async ({ searchParams }: SearchParams) => {
             ))}
           </section>
         </>
+      )}
+
+      {pagination?.totalPages > 1 && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          queryString={query}
+          filterString={filter}
+        />
       )}
     </main>
   );

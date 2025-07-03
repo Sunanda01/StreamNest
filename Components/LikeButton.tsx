@@ -9,7 +9,7 @@ type Props = {
     views: number;
 };
 const LikeButton = ({ videoId, views }: Props) => {
-    const router=useRouter();
+    const router = useRouter();
     const [isLiking, setIsLiking] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
     const [count, setCount] = useState(0);
@@ -20,27 +20,32 @@ const LikeButton = ({ videoId, views }: Props) => {
         if (res.success) {
             // setLikes((prev) => prev + 1);
             toast.success(res.message);
-            router.refresh();
         }
         else {
             toast.success(res.message);
         }
+        checkLikeStatus();
+        fetchCount();
         setIsLiking(false);
     }
+    const checkLikeStatus = async () => {
+        const res = await isVideoLiked(videoId);
+        if (res.success) setIsLiked(res.liked);
+        router.refresh();
+        // setLoading(false);
+    }
+    const fetchCount = async () => {
+        const res = await likeCount(videoId);
+        if (res.success) setCount(res?.count || 0);
+        else toast.error(res?.message || "Unable to fetch like");
+        router.refresh();
+    };
+
     useEffect(() => {
-        const checkLikeStatus = async () => {
-            const res = await isVideoLiked(videoId);
-            if (res.success) setIsLiked(res.liked);
-            // setLoading(false);
-        }
         checkLikeStatus();
     }, [videoId]);
+
     useEffect(() => {
-        const fetchCount = async () => {
-            const res = await likeCount(videoId);
-            if (res.success) setCount(res?.count || 0);
-            else toast.error(res?.message || "Unable to fetch like");
-        };
 
         fetchCount();
     }, [videoId])
