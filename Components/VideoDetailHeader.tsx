@@ -3,7 +3,7 @@ import { daysAgo } from "@/lib/util";
 import { VideoDetailHeaderProps } from "..";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ClipboardCheck, Copy } from "lucide-react";
+import { ClipboardCheck, Copy, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import LikeButton from "./LikeButton";
@@ -63,7 +63,7 @@ const VideoDetailHeader = ({
       </p>
 
       {/* Share Link Button */}
-      <div className="self-start flex items-center justify-center gap-10">
+      <div className="self-start flex items-center justify-center lg:gap-10 md:gap-10 gap-6">
         <LikeButton videoId={videoId} views={views} />
         <button onClick={handleCopyLink} className="flex items-center gap-1.5 text-sm font-bold">
           {copied ? (
@@ -73,8 +73,8 @@ const VideoDetailHeader = ({
             </>
           ) : (
             <>
-              <Copy className="h-4 w-4 text-blue-500" />
-              <span >Share Link</span>
+              <Share2 className="h-4 w-4 text-blue-500" />
+              <span className="">Share</span>
             </>
           )}
         </button>

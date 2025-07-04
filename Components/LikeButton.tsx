@@ -64,11 +64,13 @@ const LikeButton = ({ videoId, views }: Props) => {
             </button>
             <span className='flex justify-center items-center gap-1.5'>
                 <ThumbsUp className='h-4 w-4 text-yellow-400 fill-yellow-400' />
-                <span className='font-bold'> {count} Like</span>
+                <span className='font-bold'> {count} </span>
+                <span className='hidden lg:block md:block font-bold'>Like</span>
             </span>
             <span className='flex justify-center items-center gap-1.5'>
                 <Eye className='h-5 w-5  fill-gray-400 text-white' />
-                <span className='font-bold'> {views} View</span>
+                <span className='font-bold'> {views}</span>
+                <span className='hidden lg:block md:block font-bold'>View</span>
             </span>
         </>
     )
