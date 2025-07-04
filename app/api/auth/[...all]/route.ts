@@ -73,19 +73,18 @@ export const POST = async (req: NextRequest) => {
     body = await req.clone().json();
   } catch (e) {
     console.warn("Invalid JSON:", e);
+    return new Response("Invalid request body", { status: 400 });
   }
 
   const decision = await protectedAuth(req);
   if (decision.isDenied()) {
-    if (decision.reason.isEmail()) {
-      return new Response("Email validation failed", { status: 400 });
-    }
-    if (decision.reason.isRateLimit()) {
-      return new Response("Rate limit exceeded", { status: 429 });
-    }
-    if (decision.reason.isShield()) {
-      return new Response("Shield validation failed", { status: 403 });
-    }
+    return new Response(decision.reason.toString(), { status: 403 });
+  }
+
+  // Debug: Check if provider is missing
+  if (!body.provider) {
+    console.error("Missing provider in request body");
+    return new Response("Provider not specified", { status: 400 });
   }
 
   try {
@@ -95,6 +94,36 @@ export const POST = async (req: NextRequest) => {
     return new Response("Internal Server Error", { status: 500 });
   }
 };
+
+
+// export const POST = async (req: NextRequest) => {
+//   let body: any = {};
+//   try {
+//     body = await req.clone().json();
+//   } catch (e) {
+//     console.warn("Invalid JSON:", e);
+//   }
+
+//   const decision = await protectedAuth(req);
+//   if (decision.isDenied()) {
+//     if (decision.reason.isEmail()) {
+//       return new Response("Email validation failed", { status: 400 });
+//     }
+//     if (decision.reason.isRateLimit()) {
+//       return new Response("Rate limit exceeded", { status: 429 });
+//     }
+//     if (decision.reason.isShield()) {
+//       return new Response("Shield validation failed", { status: 403 });
+//     }
+//   }
+
+//   try {
+//     return await authHandler.POST(req);
+//   } catch (err) {
+//     console.error("Auth POST handler error:", err);
+//     return new Response("Internal Server Error", { status: 500 });
+//   }
+// };
 
 // const session=await auth.api.getSession({
 //         headers:await headers()
