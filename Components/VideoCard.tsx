@@ -43,7 +43,7 @@ const VideoCard = ({
   const removeVideo = async () => {
     const del = await deleteVideo(videoId, videoUrl, thumbnailUrl);
     setRemoveVideoUi(true);
-    console.log(del);
+    // console.log(del);
     if (!del.success) {
       setRemoveVideoUi(false);
       return toast.error(del.message);

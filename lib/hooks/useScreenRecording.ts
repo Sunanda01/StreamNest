@@ -88,7 +88,8 @@ export const useScreenRecording = () => {
       setState((prev) => ({ ...prev, isRecording: true }));
       return true;
     } catch (error) {
-      console.error("Recording error:", error);
+      // console.error("Recording error:", error);
+      throw error;
       return false;
     }
   };

@@ -91,7 +91,7 @@ export const getVideoById = withErrorHandling(async (videoId: string) => {
 export const deleteVideo = withErrorHandling(
   async (videoId: string, videoUrl: string, thumbnailUrl: string) => {
     try {
-      console.log("thumbnailUrl", thumbnailUrl, "videoUrl", videoUrl);
+      // console.log("thumbnailUrl", thumbnailUrl, "videoUrl", videoUrl);
       const thumbnailPublicId = getPublicIdFromUrl(
         thumbnailUrl,
         "StreamNest_Thumbnail"
@@ -100,7 +100,7 @@ export const deleteVideo = withErrorHandling(
       const res = await cloudinary.uploader.destroy(thumbnailPublicId, {
         resource_type: "image",
       });
-      console.log(res);
+      // console.log(res);
       await cloudinary.uploader.destroy(videoPublicId, {
         resource_type: "video",
       });
@@ -242,8 +242,8 @@ export const updateVideoVisibility = withErrorHandling(
         .where(eq(videos.videoId, videoId));
       return { success: true, message: "Visibility updated successfully" };
     } catch (error) {
-      console.error(error);
-      return { success: false, message: "Failed to Update" };
+      // console.error(error);
+      return { success: false, message: "Failed to Update", error };
     }
   }
 );
@@ -270,7 +270,7 @@ export const likeVideo = withErrorHandling(async (videoId: string) => {
 
     return { success: true, message: "Liked Video" };
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return { success: false, error, message: "Something Went Wrong!!!" };
   }
 });

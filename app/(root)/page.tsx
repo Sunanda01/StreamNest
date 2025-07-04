@@ -16,8 +16,8 @@ const HomePage = async ({ searchParams }: SearchParams) => {
     filter,
     Number(page) || 1
   );
-  console.log("otherVideos", otherVideos);
-  console.log("userVideos", userVideos);
+  // console.log("otherVideos", otherVideos);
+  // console.log("userVideos", userVideos);
 
   const session = await auth.api.getSession({ headers: await headers() });
   const user = session?.user;

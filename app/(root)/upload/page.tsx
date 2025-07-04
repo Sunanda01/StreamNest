@@ -68,7 +68,8 @@ const Upload = () => {
         sessionStorage.removeItem("recordedVideo");
         URL.revokeObjectURL(url);
       } catch (e) {
-        console.error("Error Loading Recorded Video", e);
+        throw e;
+        // console.error("Error Loading Recorded Video", e);
       }
     };
     checkForRecordedVideo();
@@ -90,10 +91,10 @@ const Upload = () => {
       }
 
       const video_res = await uploadVideoToCloudinary(video.file);
-      console.log("res", video_res);
+      // console.log("res", video_res);
 
       const thumbnail_res = await uploadThumbnailToCloudinary(thumbnail.file);
-      console.log(thumbnail_res);
+      // console.log(thumbnail_res);
 
       //Create a new Db Entry
       const res = await saveVideoDetails({
@@ -105,12 +106,13 @@ const Upload = () => {
         visibility: formData.visibility as Visibility,
         duration: videoDuration,
       });
-      console.log(res);
+      // console.log(res);
 
       router.push(`/video/${res.videoId}`);
     } catch (error) {
       toast.error("Upload Failed!!!");
-      console.error("Error Submitting Form: ", error);
+      // console.error("Error Submitting Form: ", error);
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
