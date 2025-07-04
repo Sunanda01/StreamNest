@@ -69,31 +69,65 @@ export const { GET } = authHandler;
 
 export const POST = async (req: NextRequest) => {
   let body: any = {};
+
   try {
+    // Safe parse body
     body = await req.clone().json();
   } catch (e) {
-    console.warn("Invalid JSON:", e);
+    console.warn("Failed to parse body:", e);
     return new Response("Invalid request body", { status: 400 });
   }
 
-  const decision = await protectedAuth(req);
-  if (decision.isDenied()) {
-    return new Response(decision.reason.toString(), { status: 403 });
+  // ✅ Check for provider
+  if (!body.provider) {
+    console.error("Missing provider field in request body");
+    return new Response("Provider not specified", { status: 400 });
   }
 
-  // Debug: Check if provider is missing
-  if (!body.provider) {
-    console.error("Missing provider in request body");
-    return new Response("Provider not specified", { status: 400 });
+  const decision = await protectedAuth(req);
+
+  if (decision.isDenied()) {
+    const reason = decision.reason.toString();
+    console.warn("Auth denied:", reason);
+    return new Response(reason, { status: 403 });
   }
 
   try {
     return await authHandler.POST(req);
   } catch (err) {
-    console.error("Auth POST handler error:", err);
+    console.error("Auth POST error:", err);
     return new Response("Internal Server Error", { status: 500 });
   }
 };
+
+
+// export const POST = async (req: NextRequest) => {
+//   let body: any = {};
+//   try {
+//     body = await req.clone().json();
+//   } catch (e) {
+//     console.warn("Invalid JSON:", e);
+//     return new Response("Invalid request body", { status: 400 });
+//   }
+
+//   const decision = await protectedAuth(req);
+//   if (decision.isDenied()) {
+//     return new Response(decision.reason.toString(), { status: 403 });
+//   }
+
+//   // Debug: Check if provider is missing
+//   if (!body.provider) {
+//     console.error("Missing provider in request body");
+//     return new Response("Provider not specified", { status: 400 });
+//   }
+
+//   try {
+//     return await authHandler.POST(req);
+//   } catch (err) {
+//     console.error("Auth POST handler error:", err);
+//     return new Response("Internal Server Error", { status: 500 });
+//   }
+// };
 
 
 // export const POST = async (req: NextRequest) => {
