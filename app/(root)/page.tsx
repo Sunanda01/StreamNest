@@ -19,12 +19,12 @@ const HomePage = async ({ searchParams }: SearchParams) => {
   console.log("otherVideos", otherVideos);
   console.log("userVideos", userVideos);
 
-  // const session = await auth.api.getSession({ headers: await headers() });
-  // const user = session?.user;
+  const session = await auth.api.getSession({ headers: await headers() });
+  const user = session?.user;
 
-  // if (!session) {
-  //   redirect('/sign-in');
-  // }
+  if (!session) {
+    redirect('/sign-in');
+  }
 
   const hasAnyVideo = otherVideos.length > 0 || userVideos.length > 0;
 
