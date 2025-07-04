@@ -1,12 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: process.env.NODE_ENV !== "production",
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: process.env.NODE_ENV !== "production",
   },
   images: {
     remotePatterns: [
@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "50mb",
     },
   },
+  output: "standalone",
 };
 
 export default nextConfig;
