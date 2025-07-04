@@ -1,6 +1,11 @@
 import aj from "@/lib/arcjet";
 import { auth } from "@/lib/auth";
-import { ArcjetDecision, shield, slidingWindow, validateEmail } from "@/lib/arcjet";
+import {
+  ArcjetDecision,
+  shield,
+  slidingWindow,
+  validateEmail,
+} from "@/lib/arcjet";
 import { toNextJsHandler } from "better-auth/next-js";
 import ip from "@arcjet/ip";
 import { NextRequest } from "next/server";
@@ -39,14 +44,20 @@ const protectedAuth = async (req: NextRequest): Promise<ArcjetDecision> => {
     userId = ip(req) || "127.0.0.1";
   }
   if (req.nextUrl.pathname.startsWith("/api/auth/sign-in")) {
-    const body = await req.clone().json();
+    // const body = await req.clone().json();
+    let body: any = {};
+    try {
+      body = await req.clone().json();
+    } catch (e) {
+      console.warn("Unable to parse body", e);
+    }
     if (typeof body.email === "string") {
       return emailValidation.protect(req, {
         email: body.email,
       });
     }
   }
-    if (!req.nextUrl.pathname.startsWith("/api/auth/sign-out")) {
+  if (!req.nextUrl.pathname.startsWith("/api/auth/sign-out")) {
     return rateLimit.protect(req, {
       fingerprint: userId,
     });
@@ -57,22 +68,33 @@ const protectedAuth = async (req: NextRequest): Promise<ArcjetDecision> => {
 export const { GET } = authHandler;
 
 export const POST = async (req: NextRequest) => {
+  let body: any = {};
+  try {
+    body = await req.clone().json();
+  } catch (e) {
+    console.warn("Invalid JSON:", e);
+  }
+
   const decision = await protectedAuth(req);
   if (decision.isDenied()) {
     if (decision.reason.isEmail()) {
-      throw new Error("Email validation failed");
+      return new Response("Email validation failed", { status: 400 });
     }
     if (decision.reason.isRateLimit()) {
-      throw new Error("Rate limit exceeded");
+      return new Response("Rate limit exceeded", { status: 429 });
     }
     if (decision.reason.isShield()) {
-      throw new Error("Shield validation failed");
+      return new Response("Shield validation failed", { status: 403 });
     }
   }
 
-  return authHandler.POST(req);
+  try {
+    return await authHandler.POST(req);
+  } catch (err) {
+    console.error("Auth POST handler error:", err);
+    return new Response("Internal Server Error", { status: 500 });
+  }
 };
-
 
 // const session=await auth.api.getSession({
 //         headers:await headers()
