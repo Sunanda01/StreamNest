@@ -13,10 +13,8 @@ export const uploadThumbnailToCloudinary = async (file: File) => {
     const data = await res.json();
 
     if (data.secure_url) {
-      // console.log("✅ Thumbnail uploaded:", data.secure_url);
       return data; // You can now use data.secure_url for saving in DB
     } else {
-      // console.error("❌ Cloudinary error:", data);
       throw new Error("Upload failed");
     }
   } catch (error) {
@@ -40,14 +38,11 @@ export const uploadVideoToCloudinary = async (file: File) => {
     const data = await res.json();
 
     if (data.secure_url) {
-      // console.log("✅ Video uploaded:", data.secure_url);
       return data; // You can now use data.secure_url for saving in DB
     } else {
-      // console.error("❌ Cloudinary error:", data);
       throw new Error("Upload failed");
     }
   } catch (error) {
-    // console.error("Upload error:", error);
     throw error;
   }
 };

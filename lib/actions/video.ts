@@ -1,21 +1,14 @@
 "use server";
-
 import { headers } from "next/headers";
 import { auth } from "../auth";
-import {
-  apiFetch,
-  doesTitleMatch,
-  getEnv,
-  getOrderByClause,
-  withErrorHandling,
-} from "../util";
+import { doesTitleMatch, getOrderByClause, withErrorHandling } from "../util";
 import { db } from "@/drizzle/db";
 import { likes, user, videos } from "@/drizzle/schema";
 import { revalidatePath } from "next/cache";
 import aj, { fixedWindow, request } from "../arcjet";
-import { and, desc, eq, ilike, ne, or, sql } from "drizzle-orm";
-import { BunnyVideoResponse, VideoDetails, Visibility } from "@/index";
+import { and, eq, ilike, ne, sql } from "drizzle-orm";
 import cloudinary from "../Cloudinary/cloudinary_server";
+import { VideoDetails, Visibility } from "@/index";
 
 const validateWithArcjet = async (fingerPrint: string) => {
   const rateLimit = aj.withRule(
@@ -38,6 +31,7 @@ const revalidatePaths = (paths: string[]) => {
   paths.forEach((path) => revalidatePath(path));
 };
 
+// Function to get userSession
 const getSessionUserId = async (): Promise<string> => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) throw new Error("Unauthenticated");
@@ -63,6 +57,7 @@ const buildVideoWithUserQuery = () =>
 
 // Server Actions
 
+// 1. Insert Video Deatils
 export const saveVideoDetails = withErrorHandling(
   async (videoDetails: VideoDetails) => {
     const userId = await getSessionUserId();
@@ -81,6 +76,7 @@ export const saveVideoDetails = withErrorHandling(
   }
 );
 
+// 2. Get Video By Id
 export const getVideoById = withErrorHandling(async (videoId: string) => {
   const [videoRecord] = await buildVideoWithUserQuery().where(
     eq(videos.videoId, videoId)
@@ -88,6 +84,7 @@ export const getVideoById = withErrorHandling(async (videoId: string) => {
   return videoRecord;
 });
 
+// 3. Delete Video
 export const deleteVideo = withErrorHandling(
   async (videoId: string, videoUrl: string, thumbnailUrl: string) => {
     try {
@@ -114,6 +111,7 @@ export const deleteVideo = withErrorHandling(
   }
 );
 
+// 4. Increment Video Views
 export const incrementVideoViews = withErrorHandling(
   async (videoId: string) => {
     await db
@@ -126,6 +124,7 @@ export const incrementVideoViews = withErrorHandling(
   }
 );
 
+// 5. Get All video that is Public and Personal
 export const getAllVideos = withErrorHandling(
   async (
     searchQuery: string = "",
@@ -187,6 +186,7 @@ export const getAllVideos = withErrorHandling(
   }
 );
 
+// 6. Get all video by session user
 export const getAllVideosByUser = withErrorHandling(
   async (
     userIdParameter: string,
@@ -224,6 +224,7 @@ export const getAllVideosByUser = withErrorHandling(
   }
 );
 
+// 7. To change the  video visibility
 export const updateVideoVisibility = withErrorHandling(
   async (videoId: string, visibility: Visibility, userIdParameter: string) => {
     try {
@@ -248,6 +249,7 @@ export const updateVideoVisibility = withErrorHandling(
   }
 );
 
+// 8. Function for liking the video
 export const likeVideo = withErrorHandling(async (videoId: string) => {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -275,6 +277,7 @@ export const likeVideo = withErrorHandling(async (videoId: string) => {
   }
 });
 
+// 9. Function to check whether the video is liked or not
 export const isVideoLiked = withErrorHandling(async (videoId: string) => {
   const session = await auth.api.getSession({ headers: await headers() });
   const userId = session?.user?.id;
@@ -290,6 +293,7 @@ export const isVideoLiked = withErrorHandling(async (videoId: string) => {
   return { success: true, liked: result.length > 0 };
 });
 
+// 10. Function for getting the number of like
 export const likeCount = withErrorHandling(async (videoId: string) => {
   try {
     const result = await db

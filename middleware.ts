@@ -1,24 +1,3 @@
-// middleware.ts
-// import { NextRequest, NextResponse } from "next/server";
-// import { auth } from "@/lib/auth";
-// import { headers } from "next/headers";
-
-// Optional: Session check
-// export async function middleware(request: NextRequest) {
-//   const session = await auth.api.getSession({
-//     headers: await headers(),
-//   });
-
-//   // Allow unauthenticated users to access sign-in page
-//   if (!session && !request.nextUrl.pathname.startsWith("/sign-in")) {
-//     return NextResponse.redirect(new URL("/sign-in", request.url));
-//   }
-
-//   return NextResponse.next();
-// }
-
-// Arcjet validation (optional, but you must export a default function)
-
 import aj, { createMiddleware, detectBot, shield } from "./lib/arcjet";
 const validate = aj
   .withRule(shield({ mode: "LIVE" }))
